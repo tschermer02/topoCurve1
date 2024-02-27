@@ -5,7 +5,7 @@
 #pip install photutils
 #pip install tifffile
 
-from dem_geotiff_class import Dem_Class
+from src.DEM_class.SpectralFiltering import Dem_Class
 from PIL import Image
 import numpy as np
 
