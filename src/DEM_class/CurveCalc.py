@@ -61,7 +61,13 @@ def CurveCalc(ZFilt, dx, dy, kt):
     K1V = np.zeros_like(SZ)
     K2U = np.zeros_like(SZ)
     K2V = np.zeros_like(SZ)
-    
+
+    a = E * G - F ** 2
+    b = -(g * E - 2 * f * F + e * G)
+    c = e * g - f ** 2
+
+    K1 = (-b + np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
+    K2 = (-b - np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
     
     K1[np.abs(K1) <= kt] = 0
     K2[np.abs(K2) <= kt] = 0
@@ -124,5 +130,5 @@ def CurveCalc(ZFilt, dx, dy, kt):
     }
 
     print(K1, K2, KM, KG)
-    
+
     return K1, K2, KM, KG
