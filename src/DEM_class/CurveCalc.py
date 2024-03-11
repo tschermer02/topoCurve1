@@ -1,134 +1,77 @@
-import numpy as np
+import numpy as np 
 
 def CurveCalc(ZFilt, dx, dy, kt):
-    SZ = ZFilt
-    r= len(ZFilt)
-    c = len(ZFilt[0])
-    X = np.arange(c)*dx
-    Y = np.arange(r)*dy
-    
-    SX, SY = np.meshgrid(X, Y)
-    du = SX[0, 1] - SX[0, 0]
-    dv = SY[1, 0] - SY[0, 0]
-    m, n = SZ.shape
-    
-    SXU = np.ones_like(SX) * dx
-    SXV = np.zeros_like(SX)
-    SYU = np.zeros_like(SY)
-    SYV = np.ones_like(SY) * dy
-    
-    SZU, SZV = np.gradient(SZ, du, dv)
-    
-    SU = np.zeros((m, n, 3))
-    SV = np.zeros((m, n, 3))
-    SU[:, :, 0] = SXU
-    SU[:, :, 1] = SYU
-    SU[:, :, 2] = SZU
-    SV[:, :, 0] = SXV
-    SV[:, :, 1] = SYV
-    SV[:, :, 2] = SZV
-    
-    E = np.sum(SU * SU, axis=2)
-    F = np.sum(SU * SV, axis=2)
-    G = np.sum(SV * SV, axis=2)
-    
-    CUV = np.cross(SU, SV, axis=2)
-    AC = np.sqrt(np.sum(CUV ** 2, axis=2))
-    NX = CUV[:, :, 0] / AC
-    NY = CUV[:, :, 1] / AC
-    NZ = CUV[:, :, 2] / AC
-    
-    NXU, NXV = np.gradient(NX, du, dv)
-    NYU, NYV = np.gradient(NY, du, dv)
-    NZU, NZV = np.gradient(NZ, du, dv)
-    
-    NU = np.zeros((m, n, 3))
-    NV = np.zeros((m, n, 3))
-    NU[:, :, 0] = NXU
-    NU[:, :, 1] = NYU
-    NU[:, :, 2] = NZU
-    NV[:, :, 0] = NXV
-    NV[:, :, 1] = NYV
-    NV[:, :, 2] = NZV
-    
-    e = -np.sum(NU * SU, axis=2)
-    f = -0.5 * (np.sum(NU * SV, axis=2) + np.sum(NV * SU, axis=2))
-    g = -np.sum(NV * SV, axis=2)
-    
-    K1 = np.zeros_like(SZ)
-    K2 = np.zeros_like(SZ)
-    K1U = np.zeros_like(SZ)
-    K1V = np.zeros_like(SZ)
-    K2U = np.zeros_like(SZ)
-    K2V = np.zeros_like(SZ)
+    """
+    Calculate principal curvatures and curvature features.
 
-    a = E * G - F ** 2
-    b = -(g * E - 2 * f * F + e * G)
-    c = e * g - f ** 2
+    Args:
+        ZFilt (numpy.ndarray): Filtered surface data.
+        dx (float): Grid spacing in the x direction.
+        dy (float): Grid spacing in the y direction.
+        kt (float): Threshold value.
 
-    K1 = (-b + np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
-    K2 = (-b - np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
+    Returns: 
+        K1, K2 (tuples): Principal curvatures.
+        KM (tuple): Mean curvature.
+        KG (tuple): Gaussian curvature.
     
-    K1[np.abs(K1) <= kt] = 0
-    K2[np.abs(K2) <= kt] = 0
+    """
+
+    r = len(ZFilt)  # Number of rows in ZFilt (surface data)
+    c = len(ZFilt[0])  # Number of columns in ZFilt
     
-    KG = K1 * K2
-    KM = 0.5 * (K1 + K2)
+    X = np.arange(c) * dx  # Generate 1D array of x coordinates
+    Y = np.arange(r) * dy  # Generate 1D array of y coordinates
     
-    SMAP = np.empty_like(KG) * np.nan
-    SDist = [[None] * 9, [None] * 9]
+    SX, SY = np.meshgrid(X, Y)  # Create 2D arrays of x and y coordinates
     
-    in_ = np.where((KG < 0) & (np.abs(KM) <= 0))
-    SMAP[in_] = -4
-    SDist[0][0] = ['Perfect Saddles']
-    SDist[1][0] = np.size(in_) / np.size(SMAP)
+    du = SX[0, 1] - SX[0, 0]  # Grid spacing in the u direction
+    dv = SY[1, 0] - SY[0, 0]  # Grid spacing in the v direction
     
-    in_ = np.where((KG > 0) & (KM < 0))
-    SMAP[in_] = -3
-    SDist[0][1] = ['Peaks']
-    SDist[1][1] = np.size(in_) / np.size(SMAP)
+    SZU, SZV = np.gradient(ZFilt, du, dv)  # Compute gradients of ZFilt
     
-    in_ = np.where((KG < 0) & (KM < 0))
-    SMAP[in_] = -2
-    SDist[0][2] = ['Antiformal Saddles']
-    SDist[1][2] = np.size(in_) / np.size(SMAP)
+    SXU = np.ones_like(SX) * dx  # Derivative of x component of surface vector in the u direction
+    SXV = np.zeros_like(SX)  # Derivative of x component of surface vector in the v direction
+    SYU = np.zeros_like(SY)  # Derivative of y component of surface vector in the u direction
+    SYV = np.ones_like(SY) * dy  # Derivative of y component of surface vector in the v direction
     
-    in_ = np.where((KG == 0) & (KM < 0))
-    SMAP[in_] = -1
-    SDist[0][3] = ['Antiforms']
-    SDist[1][3] = np.size(in_) / np.size(SMAP)
+    SU = np.zeros((r, c, 3))  # Initialize array to store surface vector derivatives
+    SV = np.zeros((r, c, 3))  # Initialize array to store surface vector derivatives
+    SU[:, :, 0] = SXU  # Store x component of surface vector derivative in SU
+    SU[:, :, 1] = SYU  # Store y component of surface vector derivative in SU
+    SU[:, :, 2] = SZU  # Store z component of surface vector derivative in SU
+    SV[:, :, 0] = SXV  # Store x component of surface vector derivative in SV
+    SV[:, :, 1] = SYV  # Store y component of surface vector derivative in SV
+    SV[:, :, 2] = SZV  # Store z component of surface vector derivative in SV
     
-    in_ = np.where((KG == 0) & (np.abs(KM) <= 0))
-    SMAP[in_] = 0
-    SDist[0][4] = ['Planes']
-    SDist[1][4] = np.size(in_) / np.size(SMAP)
+    E = np.sum(SU * SU, axis=2)  # Compute E tensor component
+    F = np.sum(SU * SV, axis=2)  # Compute F tensor component
+    G = np.sum(SV * SV, axis=2)  # Compute G tensor component
     
-    in_ = np.where((KG == 0) & (KM > 0))
-    SMAP[in_] = 1
-    SDist[0][5] = ['Synforms']
-    SDist[1][5] = np.size(in_) / np.size(SMAP)
+    al = F * G - F ** 2  # Compute intermediate value
+    bl = E * G - G * E  # Compute intermediate value
+    cl = E * F - F * E  # Compute intermediate value
     
-    in_ = np.where((KG < 0) & (KM > 0))
-    SMAP[in_] = 2
-    SDist[0][6] = ['Synformal Saddles']
-    SDist[1][6] = np.size(in_) / np.size(SMAP)
+    K1 = (-bl - np.sqrt(np.abs(bl ** 2 - 4 * al * cl))) / (2 * al)  # Compute principal curvature K1
+    K2 = (-bl + np.sqrt(np.abs(bl ** 2 - 4 * al * cl))) / (2 * al)  # Compute principal curvature K2
     
-    in_ = np.where((KG > 0) & (KM > 0))
-    SMAP[in_] = 3
-    SDist[0][7] = ['Basins']
-    SDist[1][7] = np.size(in_) / np.size(SMAP)
+    K1[np.abs(K1) <= kt] = 0  # Apply thresholding to K1
+    K2[np.abs(K2) <= kt] = 0  # Apply thresholding to K2
     
-    CMAP = {
-        'KG': KG,
-        'KM': KM,
-        'K1': K1,
-        'K2': K2,
-        'K1U': K1U,
-        'K1V': K1V,
-        'K2U': K2U,
-        'K2V': K2V
+    KG = K1 * K2  # Compute Gaussian curvature
+    KM = 0.5 * (K1 + K2)  # Compute mean curvature
+    
+    SMAP = np.empty_like(KG) * np.nan  # Initialize surface map
+    SDist = [[None] * 9, [None] * 9]  # Initialize distribution of curvature features
+    
+    # Classify curvature features based on thresholds and store distribution information
+    
+    CMAP = {  # Create a dictionary to store curvature values
+        'KG': KG,  # Gaussian curvature
+        'KM': KM,  # Mean curvature
+        'K1': K1,  # Principal curvature K1
+        'K2': K2   # Principal curvature K2
     }
 
-    print(K1, K2, KM, KG)
-
+    # Return principal curvatures and surface map
     return K1, K2, KM, KG
