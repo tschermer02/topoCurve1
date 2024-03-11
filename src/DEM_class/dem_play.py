@@ -36,7 +36,6 @@ dem.plot(detrended, "greyscale_dem_detrend.png")
 #print(dem.FFT([200,2000], "lowpass", 0.5))
 
 
-dx, ZFilt = dem.FFT([90,100], "lowpass", 0.5)
+dx, dy, ZFilt = dem.FFT([90,100], "lowpass", 0.5)
 dem.plot(ZFilt, "fftdem.png")
-dy = dx
 CurveCalc(ZFilt, dx, dy, 0)

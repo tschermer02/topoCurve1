@@ -231,4 +231,4 @@ class Dem_Class(): #Spectral Filtering Class
                         (self.pad_y_max + self.dim_y): -(self.pad_y_min + self.dim_y)] + self.plane
         self.ZDiff = self.z_array - self.ZFilt  # Compute the difference between original and filtered elevation values
 
-        return self.dx[1], self.ZFilt  # Return the filtered elevation values
+        return self.dx[0], self.dx[1], self.ZFilt  # Return the filtered elevation values
