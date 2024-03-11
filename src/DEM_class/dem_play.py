@@ -5,10 +5,10 @@
 #pip install photutils
 #pip install tifffile
 
-from src.DEM_class.SpectralFiltering import Dem_Class
+from SpectralFiltering import Dem_Class
 from PIL import Image
 import numpy as np
-
+from CurveCalc import CurveCalc
 tiff_file = "../../repos/TopoCurve/DEM_files/Purgatory.tif"
 
 
@@ -34,5 +34,9 @@ dem.plot(detrended, "greyscale_dem_detrend.png")
 # FFT
  #(self, 1/200, "lowpass", 0.5)
 #print(dem.FFT([200,2000], "lowpass", 0.5))
-dem.plot(dem.FFT([90,100], "lowpass", 0.5), "fftdem.png")
 
+
+dx, ZFilt = dem.FFT([90,100], "lowpass", 0.5)
+dem.plot(ZFilt, "fftdem.png")
+dy = dx
+CurveCalc(ZFilt, dx, dy, 0)

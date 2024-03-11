@@ -8,7 +8,7 @@ from scipy.fft import fft2, ifft2
 from tifffile import TiffFile
 from geotiff import GeoTiff
 
-class Dem_Class():  # Define a class named Dem_Class
+class Dem_Class(): #Spectral Filtering Class
     """
     A class for processing digital elevation models (DEM).
     
@@ -231,4 +231,4 @@ class Dem_Class():  # Define a class named Dem_Class
                         (self.pad_y_max + self.dim_y): -(self.pad_y_min + self.dim_y)] + self.plane
         self.ZDiff = self.z_array - self.ZFilt  # Compute the difference between original and filtered elevation values
 
-        return self.ZFilt  # Return the filtered elevation values
+        return self.dx[1], self.ZFilt  # Return the filtered elevation values
