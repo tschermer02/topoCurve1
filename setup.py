@@ -18,7 +18,7 @@ setup(
     description='A package for processing digital elevation models.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/yourusername/topo_curve',
+    url='https://github.com/tschermer02/topoCurve1',
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
