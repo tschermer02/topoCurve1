@@ -1,19 +1,40 @@
 # TopoCurve
 
-==============================
 TopoCurve is a Python library for processing digital elevation models (DEM) stored in GeoTIFF format. This library provides functionalities to extract metadata, calculate principal curvatures and curvature features, as well as plot elevation values. It also includes spectral filtering capabilities for advanced DEM processing.
 
 ## Installation
 
 To install TopoCurve, simply clone the repository and install the dependencies listed in `requirements.txt`:
 
-```bash
+```
 git clone https://github.com/username/topo_curve.git
 cd topo_curve
 pip install -r requirements.txt
+```
 
-Project Organization
-------------
+## Usage
+
+```
+from topo_curve import TopoCurve
+from topo_curve.spectralfiltering import SpectralFiltering
+
+# Instantiate TopoCurve object with a GeoTIFF file
+dem = TopoCurve('path/to/your/file.tif')
+
+# Calculate principal curvatures and curvature features
+K1, K2, KM, KG = dem.CurveCalc(ZFilt, dx, dy, kt)
+
+# Plot and save elevation values
+dem.plot(input_array, 'output_image.png')
+
+# Instantiate SpectralFiltering object with a GeoTIFF file
+spectral_filter = SpectralFiltering('path/to/your/file.tif')
+
+# Apply FFT filtering
+dx, dy, filtered_elevation = spectral_filter.FFT(filter, filterType, alphaIn)
+```
+
+## Project Organization
 
     ├── LICENSE
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
@@ -60,8 +81,7 @@ Project Organization
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
-
---------
+---
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 ```
