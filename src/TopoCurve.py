@@ -153,7 +153,7 @@ class TopoCurve ():
             input (numpy.ndarray): Input elevation values.
             filename (str): Name of the output image file.
         """
-        output_dir = '../topoCurve1/src/data/SpectralFilteringOutput/'  # Define the output directory
+        output_dir = '../topoCurve1/reports/figures/'  # Define the output directory
         os.makedirs(output_dir, exist_ok=True)  # Create directory if it doesn't exist
         # Normalize input values to range [0, 255] and convert to uint8
         img_array = 255 * ((input - np.amin(input)) / (np.amax(input) - np.amin(input)))

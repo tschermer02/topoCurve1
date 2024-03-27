@@ -67,7 +67,7 @@ Calculate principal curvatures and curvature features.
 
 #### `plot(input, filename)`
 
-Plot the elevation values and save the plot as an image file.
+Plot the elevation values and save the plot as an image file to reports/figures.
 
 - **Parameters:**
   - `input` (numpy.ndarray): Input elevation values.
@@ -155,11 +155,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
     │
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     │
