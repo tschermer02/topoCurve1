@@ -2,6 +2,11 @@
 -e .
 
 # external requirements
+click
+Sphinx
+coverage
+awscli
+flake8
 numpy==1.21.4
 scipy==1.7.1
 photutils==1.2.0
