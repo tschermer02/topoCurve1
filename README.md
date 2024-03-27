@@ -36,9 +36,9 @@ dx, dy, filtered_elevation = spectral_filter.FFT(filter, filterType, alphaIn)
 
 ## API Documentation
 
-## TopoCurve Class
+### TopoCurve Class
 
-### `TopoCurve(tiff_file)`
+#### `TopoCurve(tiff_file)`
 
 Initialize the TopoCurve object with a GeoTIFF file.
 
@@ -47,7 +47,7 @@ Initialize the TopoCurve object with a GeoTIFF file.
 
 ---
 
-### `CurveCalc(ZFilt, dx, dy, kt)`
+#### `CurveCalc(ZFilt, dx, dy, kt)`
 
 Calculate principal curvatures and curvature features.
 
@@ -65,7 +65,7 @@ Calculate principal curvatures and curvature features.
 
 ---
 
-### `plot(input, filename)`
+#### `plot(input, filename)`
 
 Plot the elevation values and save the plot as an image file.
 
@@ -75,9 +75,7 @@ Plot the elevation values and save the plot as an image file.
 
 ---
 
-## Spectral Filtering Class
-
-### `Spectral Filtering`
+### Spectral Filtering Class
 
 #### `SpectralFiltering(tiff_file)`
 
@@ -140,9 +138,9 @@ Apply FFT filtering to the elevation values.
 
 ---
 
-### License
+## License
 
-[Include licensing information here]
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Project Organization
 
