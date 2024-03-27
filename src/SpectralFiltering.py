@@ -2,8 +2,8 @@
 import math
 import numpy as np
 from scipy.fft import fft2, ifft2
-from scipy.signal import detrend
 from photutils.psf import TukeyWindow
+from scipy import signal
 from TopoCurve import TopoCurve
 
 class SpectralFiltering (TopoCurve):
