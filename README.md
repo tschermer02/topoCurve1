@@ -34,6 +34,116 @@ spectral_filter = SpectralFiltering('path/to/your/file.tif')
 dx, dy, filtered_elevation = spectral_filter.FFT(filter, filterType, alphaIn)
 ```
 
+## API Documentation
+
+# TopoCurve
+
+## TopoCurve Class
+
+### `TopoCurve(tiff_file)`
+
+Initialize the TopoCurve object with a GeoTIFF file.
+
+- **Parameters:**
+  - `tiff_file` (str): Path to the GeoTIFF file.
+
+---
+
+### `CurveCalc(ZFilt, dx, dy, kt)`
+
+Calculate principal curvatures and curvature features.
+
+- **Parameters:**
+
+  - `ZFilt` (numpy.ndarray): Filtered surface data.
+  - `dx` (float): Grid spacing in the x direction.
+  - `dy` (float): Grid spacing in the y direction.
+  - `kt` (float): Threshold value.
+
+- **Returns:**
+  - `K1, K2` (tuple): Principal curvatures.
+  - `KM` (tuple): Mean curvature.
+  - `KG` (tuple): Gaussian curvature.
+
+---
+
+### `plot(input, filename)`
+
+Plot the elevation values and save the plot as an image file.
+
+- **Parameters:**
+  - `input` (numpy.ndarray): Input elevation values.
+  - `filename` (str): Name of the output image file.
+
+---
+
+### `Spectral Filtering`
+
+#### `SpectralFiltering(tiff_file)`
+
+Initialize the SpectralFiltering object with a GeoTIFF file.
+
+- **Parameters:**
+  - `tiff_file` (str): Path to the GeoTIFF file.
+
+#### `detrend()`
+
+Detrend the elevation values.
+
+- **Returns:**
+  - `Z_detrended` (numpy.ndarray): Detrended elevation values.
+  - `plane` (numpy.ndarray): Trend component of the elevation values.
+
+#### `mirror_dem()`
+
+Mirror the elevation values.
+
+- **Returns:**
+  - `mirrored_array` (numpy.ndarray): Mirrored elevation values.
+
+#### `tukeyWindow(alphaIn)`
+
+Apply a Tukey window to the elevation values.
+
+- **Arguments:**
+
+  - `alphaIn` (float): Parameter controlling the shape of the Tukey window.
+
+- **Returns:**
+  - `tukey_array` (numpy.ndarray): Elevation values after applying the Tukey window.
+
+#### `padding(alphaIn)`
+
+Pad the elevation values.
+
+- **Arguments:**
+
+  - `alphaIn` (float): Parameter controlling the shape of the Tukey window.
+
+- **Returns:**
+  - `padded_window_array` (numpy.ndarray): Padded elevation values.
+
+#### `FFT(filter, filterType, alphaIn)`
+
+Apply FFT filtering to the elevation values.
+
+- **Arguments:**
+
+  - `filter` (float): Filter parameter.
+  - `filterType` (str): Type of filter ('lowpass' or 'highpass').
+  - `alphaIn` (float): Parameter controlling the shape of the Tukey window.
+
+- **Returns:**
+  - `dx` (float): Grid spacing in the x direction.
+  - `dy` (float): Grid spacing in the y direction.
+  - `ZFilt` (numpy.ndarray): Filtered elevation values.
+
+---
+
+### License
+
+[Include licensing information here]
+
 ## Project Organization
 
     ├── LICENSE
