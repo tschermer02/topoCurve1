@@ -145,7 +145,6 @@ class TopoCurve ():
         # Return principal curvatures and surface map
         return K1, K2, KM, KG
 
-
     def plot(self, input, filename):  # Define a method to plot and save elevation values
         """
         Plot the elevation values and save the plot as an image file.
