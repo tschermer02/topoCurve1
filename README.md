@@ -36,8 +36,6 @@ dx, dy, filtered_elevation = spectral_filter.FFT(filter, filterType, alphaIn)
 
 ## API Documentation
 
-# TopoCurve
-
 ## TopoCurve Class
 
 ### `TopoCurve(tiff_file)`
@@ -76,6 +74,8 @@ Plot the elevation values and save the plot as an image file.
   - `filename` (str): Name of the output image file.
 
 ---
+
+## Spectral Filtering Class
 
 ### `Spectral Filtering`
 
