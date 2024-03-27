@@ -1,7 +1,16 @@
-TopoCurve
-==============================
+# TopoCurve
 
-intrinsic and extrinsic curvatures of topographic surfaces
+==============================
+TopoCurve is a Python library for processing digital elevation models (DEM) stored in GeoTIFF format. This library provides functionalities to extract metadata, calculate principal curvatures and curvature features, as well as plot elevation values. It also includes spectral filtering capabilities for advanced DEM processing.
+
+## Installation
+
+To install TopoCurve, simply clone the repository and install the dependencies listed in `requirements.txt`:
+
+```bash
+git clone https://github.com/username/topo_curve.git
+cd topo_curve
+pip install -r requirements.txt
 
 Project Organization
 ------------
@@ -55,3 +64,4 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+```
