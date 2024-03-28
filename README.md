@@ -19,19 +19,19 @@ from TopoCurve import TopoCurve
 from SpectralFiltering import SpectralFiltering
 
 # Instantiate TopoCurve object with a GeoTIFF file
-dem = TopoCurve('references\DEM_files\Purgatory.tif')
+dem = TopoCurve('path/to/your/file.tif')
 
 # Instantiate SpectralFiltering object with a GeoTIFF file
-spectral_filter = SpectralFiltering('references\DEM_files\Purgatory.tif')
+spectral_filter = SpectralFiltering('path/to/your/file.tif')
 
 # Apply FFT filtering
-dx, dy, filtered_elevation = spectral_filter.FFT(filter, 'lowpass', 0)
+dx, dy, filtered_elevation = spectral_filter.FFT(filter, 'filtertype', alphaIn)
 
 # Calculate principal curvatures and curvature features
-K1, K2, KM, KG = dem.CurveCalc(filtered_elevation, dx, dy, 0)
+K1, K2, KM, KG = dem.CurveCalc(ZFilt, dx, dy, kt)
 
 # Plot and save elevation values
-dem.plot(filtered_elevation, 'output_image.png')
+dem.plot(input_array, 'output_image.png')
 ```
 
 ## API Documentation

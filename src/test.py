@@ -25,7 +25,7 @@ class TestTopoCurve(unittest.TestCase):
 
     def test_SpectralFiltering_operations(self):
         # Create a mock elevation array
-        elevation_array = np.random.rand(100)
+        elevation_array = np.random.rand(100, 100)
         
         # Initialize SpectralFiltering object
         spectral_filtering = SpectralFiltering("data\DEM_files\Purgatory.tif")
