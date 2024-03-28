@@ -23,7 +23,7 @@ class TopoCurve ():
 
     def __init__(self, tiff_file):  # Define the constructor method for the class
         """
-        Initializes the Dem_Class object.
+        Initializes the Topocurve object.
 
         Args:
             tiff_file (str): Path to the GeoTIFF file.
