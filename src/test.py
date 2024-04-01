@@ -140,7 +140,7 @@ class TestTopoCurve(unittest.TestCase):
         # Verify that the Tukey window is correctly applied
         self.assertEqual(tukey_array.shape, expected_tukey_array.shape)
         self.assertTrue(np.allclose(tukey_array, expected_tukey_array))
-    '''
+    
     def test_padding_method(self):
         # Mock the SpectralFiltering object
         spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
@@ -164,11 +164,12 @@ class TestTopoCurve(unittest.TestCase):
 
         # Call the padding method
         padded_array = spec_filt_obj.padding(alphaIn=0.5)
-
+        print(padded_array)
         # Verify that padding is applied correctly
         self.assertEqual(padded_array.shape, expected_padded_array.shape)
         self.assertTrue(np.array_equal(padded_array, expected_padded_array))
-     
+        
+    '''
     def test_fft_method_lowpass(self):
         # Mocked elevation values
         mocked_elevation_values = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
