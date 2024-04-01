@@ -124,15 +124,16 @@ class TestTopoCurve(unittest.TestCase):
         mock_elevation_values = np.array([[1, 2], [3, 4]])
         
         # Set up the expected Tukey window
-        expected_tukey_array = np.array([
-            [0., 0.,0.,0.,0.,0.,],
-            [0.,0.81813562, 0.9045085,  1.80901699, 1.63627124, 0.],
-            [0., 0.9045085,  1., 2., 1.80901699, 0.],
-            [0., 2.71352549, 3., 4., 3.61803399,0.],
-            [0., 2.45440686, 2.71352549, 3.61803399, 3.27254249, 0.],
-            [0., 0.,0.,0.,0.,0.,]
-        ])
-
+        expected_tukey_array = np.array([[0., 0., 0., 0., 0., 0.],
+            [0., 4.47452698e-18, 8.35974985e-17, 1.67194997e-16, 8.94905396e-18, 0.],
+            [0., 8.35974985e-17, 1.11022302e-16, 2.22044605e-16,1.67194997e-16, 0.],
+            [0., 3.34389994e-16, 4.44089210e-16, 0., 0., 0.],
+            [0., 1.78981079e-17, 3.34389994e-16, 0., 0., 0.],
+            [0., 0., 0., 0., 0., 0.]])
+        
+        # Patch the z_array attribute to return the mock elevation values
+        spec_filt_obj.z_array = mock_elevation_values
+        
         # Call the tukeyWindow method
         tukey_array = spec_filt_obj.tukeyWindow(alphaIn=0.5)
 
@@ -145,23 +146,21 @@ class TestTopoCurve(unittest.TestCase):
         spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
         
         # Mock the mirrored array
-        mock_mirrored_array = np.array([
-            [1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 9]
-        ])
+        mock_elevation_values = np.array([[1, 2], [3, 4]])
         
         # Set up the expected padded array
         expected_padded_array = np.array([
-            [0, 0, 0, 0, 0],
-            [0, 1, 2, 3, 0],
-            [0, 4, 5, 6, 0],
-            [0, 7, 8, 9, 0],
-            [0, 0, 0, 0, 0]
-        ])
+            [0., 0., 0., 0., 0., 0., 0., 0.],
+            [0., 0., 0., 0., 0., 0., 0., 0.],
+            [0., 0., 4.47452698e-18, 8.35974985e-17, 1.67194997e-16, 8.94905396e-18, 0., 0.],
+            [0., 0., 8.35974985e-17, 1.11022302e-16, 2.22044605e-16,1.67194997e-16, 0., 0.],
+            [0.,0., 3.34389994e-16, 4.44089210e-16, 0., 0., 0., 0.],
+            [0.,0., 1.78981079e-17, 3.34389994e-16, 0., 0., 0., 0.],
+            [0.,0., 0., 0., 0., 0., 0., 0.],
+            [0.,0., 0., 0., 0., 0., 0., 0.]])
 
         # Mock the mirror_dem method to return the mock mirrored array
-        spec_filt_obj.mirror_dem = MagicMock(return_value=mock_mirrored_array)
+        spec_filt_obj.z_array = mock_elevation_values
 
         # Call the padding method
         padded_array = spec_filt_obj.padding(alphaIn=0.5)
@@ -169,7 +168,62 @@ class TestTopoCurve(unittest.TestCase):
         # Verify that padding is applied correctly
         self.assertEqual(padded_array.shape, expected_padded_array.shape)
         self.assertTrue(np.array_equal(padded_array, expected_padded_array))
-        '''
+     
+    def test_fft_method_lowpass(self):
+        # Mocked elevation values
+        mocked_elevation_values = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
+        # Expected lowpass filtered elevation values
+        expected_filtered_values_lowpass = np.array([
+            [0.01149374, 0.18236484, 0.01149374],
+            [0.18236484, 0.7688021, 0.18236484],
+            [0.01149374, 0.18236484, 0.01149374]
+        ])
+
+        # Create SpectralFiltering object
+        spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
+
+        # Manually set necessary attributes
+        spec_filt_obj.dimx_ma = 3
+        spec_filt_obj.dimy_ma = 3
+        spec_filt_obj.dx = np.array([1.0, 1.0] )
+        spec_filt_obj.powerOfTwo = 4  # Assuming this is the correct powerOfTwo value for the mocked elevation values
+
+        # Call FFT method with lowpass filtering
+        dx, dy, filtered_values_lowpass = spec_filt_obj.FFT(filter=(1, 5), filterType='lowpass', alphaIn=0.5)
+
+        # Verify that the lowpass filtered elevation values are computed correctly
+        self.assertAlmostEqual(dx, 1.0)
+        self.assertAlmostEqual(dy, 1.0)
+        np.testing.assert_allclose(filtered_values_lowpass, expected_filtered_values_lowpass, rtol=1e-5)
+
+    def test_fft_method_highpass(self):
+        # Mocked elevation values
+        mocked_elevation_values = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+
+        # Expected highpass filtered elevation values
+        expected_filtered_values_highpass = np.array([
+            [-0.01149374, -0.18236484, -0.01149374],
+            [-0.18236484, 0.2311979, -0.18236484],
+            [-0.01149374, -0.18236484, -0.01149374]
+        ])
+
+        # Create SpectralFiltering object
+        spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
+
+        # Manually set necessary attributes
+        spec_filt_obj.dimx_ma = 3
+        spec_filt_obj.dimy_ma = 3
+        spec_filt_obj.dx = np.array([1.0, 1.0] )
+        spec_filt_obj.powerOfTwo = 4  # Assuming this is the correct powerOfTwo value for the mocked elevation values
+
+        # Call FFT method with highpass filtering
+        dx, dy, filtered_values_highpass = spec_filt_obj.FFT(filter=(1, 5), filterType='highpass', alphaIn=0.5)
+
+        # Verify that the highpass filtered elevation values are computed correctly
+        self.assertAlmostEqual(dx, 1.0)
+        self.assertAlmostEqual(dy, 1.0)
+        np.testing.assert_allclose(filtered_values_highpass, expected_filtered_values_highpass, rtol=1e-5)
+        '''
 if __name__ == '__main__':
     unittest.main()
