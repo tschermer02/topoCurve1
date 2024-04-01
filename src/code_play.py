@@ -9,6 +9,10 @@ spectral_filter = SpectralFiltering('references\DEM_files\Purgatory.tif')
 
 # Apply FFT filtering
 dx, dy, filtered_elevation = spectral_filter.FFT([190, 200], 'lowpass', 0)
+print(dy)
+mirror = spectral_filter.mirror_dem()
+
+dem.plot(mirror, 'output_image_mirror.png')
 
 # Calculate principal curvatures and curvature features
 K1, K2, KM, KG = dem.CurveCalc(filtered_elevation, dx, dy, 0)
