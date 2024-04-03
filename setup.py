@@ -10,7 +10,8 @@ setup(
         'Pillow',
         'photutils',
         'tifffile',
-        'geotiff'
+        'geotiff', 
+        'scikit-learn'
     ],
     python_requires='>=3.6',
     author='Taylor Schermer, Joel Nash, Nate Klema',
