@@ -5,6 +5,7 @@ from scipy.fft import fft2, ifft2
 from photutils.psf import TukeyWindow
 from scipy import signal
 from TopoCurve import TopoCurve
+from sklearn.linear_model import LinearRegression
 
 class SpectralFiltering (TopoCurve):
     """
@@ -35,15 +36,41 @@ class SpectralFiltering (TopoCurve):
 
     def detrend(self):  # Define a method to detrend elevation values
         """
-        Detrend the elevation values.
+        Detrend the elevation values using least squares plane fitting.
 
         Returns:
             Z_detrended (numpy.ndarray): Detrended elevation values.
             plane (numpy.ndarray): Trend component of the elevation values.
         """
-        self.Z_detrended = signal.detrend(self.z_array)  # Detrend the elevation values
-        self.plane = self.z_array - self.Z_detrended  # Calculate the trend component
+        # Convert to NumPy array if not already
+        z_array = np.array(self.z_array)
+
+        # Create meshgrid for coordinates
+        x, y = np.meshgrid(np.arange(z_array.shape[1]), np.arange(z_array.shape[0]))
+        
+        # Flatten coordinates and elevation values
+        x_flat = x.flatten()
+        y_flat = y.flatten()
+        z_flat = z_array.flatten()
+
+        # Fit a plane using linear regression
+        model = LinearRegression().fit(np.column_stack((x_flat, y_flat)), z_flat)
+
+        # Predict plane values
+        plane_values = model.predict(np.column_stack((x_flat, y_flat)))
+
+        # Reshape plane values back to 2D
+        plane = plane_values.reshape(z_array.shape)
+
+        # Calculate detrended values
+        Z_detrended = z_array - plane
+
+        # Save detrended values and plane
+        self.Z_detrended = Z_detrended
+        self.plane = plane
+
         return self.Z_detrended, self.plane  # Return the detrended values and the trend component
+
     def mirror_dem(self):  # Define a method to mirror elevation values
         """
         Mirror the elevation values.

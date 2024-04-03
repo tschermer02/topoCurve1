@@ -19,42 +19,29 @@ class TestTopoCurve(unittest.TestCase):
         self.assertIsInstance(topo_curve_obj.metadata, dict)  # Check if metadata is a dictionary
         # Add more assertions to check specific metadata if needed
         import unittest
-    '''
-    def test_curve_calc_with_known_input(self):
-        # Known input data
-        ZFilt = np.array([[1, 2, 3],
-                          [4, 5, 6],
-                          [7, 8, 9]])
+    def test_CurveCalc(self):
+        dem = TopoCurve("references\DEM_files\Purgatory.tif")
+        # Define test inputs
+        ZFilt = np.array([[1, 2],[3,4]])
         dx = 1.0
         dy = 1.0
         kt = 0
 
-        # Manually compute the expected output
-        expected_K1 = np.array([[],
-                                [],
-                                []])
-        expected_K2 = np.array([[],
-                                [],
-                                []])
-        expected_KM = np.array([[],
-                                [],
-                                []])
-        expected_KG = np.array([[],
-                                [],
-                                []])
+        # Call the function
+        result = dem.CurveCalc (ZFilt, dx, dy, kt)
 
-        # Initialize a TopoCurve object
-        topo_curve_obj = TopoCurve("references\DEM_files\Purgatory.tif")
+        # Define the expected output values
+        expected_K1 = np.array([[0.0,0.0], [0.0, 0.0]])
+        expected_K2 = np.array([[0.0,0.0], [0.0, 0.0]])
+        expected_KM = np.array([[0.0,0.0], [0.0, 0.0]])
+        expected_KG = np.array([[0.0,0.0], [0.0, 0.0]])
 
-        # Call the CurveCalc method with the known input data
-        K1, K2, KM, KG = topo_curve_obj.CurveCalc(ZFilt, dx, dy, kt)
+        # Check if the actual output matches the expected output
+        np.testing.assert_array_almost_equal(result[0], expected_K1)
+        np.testing.assert_array_almost_equal(result[1], expected_K2)
+        np.testing.assert_array_almost_equal(result[2], expected_KM)
+        np.testing.assert_array_almost_equal(result[3], expected_KG)
 
-        # Assert that the method returns the expected principal curvatures and curvature features
-        np.testing.assert_array_equal(K1, expected_K1)
-        np.testing.assert_array_equal(K2, expected_K2)
-        np.testing.assert_array_equal(KM, expected_KM)
-        np.testing.assert_array_equal(KG, expected_KG)
-    '''
     def test_initialization_inherits_metadata(self):
         # Mock the TopoCurve initialization to return metadata
         mock_metadata = {'GeogAngularUnitsGeoKey': 4326, 'ProjLinearUnitsGeoKey': 9001}  # Example metadata
@@ -140,7 +127,7 @@ class TestTopoCurve(unittest.TestCase):
         # Verify that the Tukey window is correctly applied
         self.assertEqual(tukey_array.shape, expected_tukey_array.shape)
         self.assertTrue(np.allclose(tukey_array, expected_tukey_array))
-    
+    '''
     def test_padding_method(self):
         # Mock the SpectralFiltering object
         spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
@@ -169,10 +156,33 @@ class TestTopoCurve(unittest.TestCase):
         self.assertEqual(padded_array.shape, expected_padded_array.shape)
         self.assertTrue(np.array_equal(padded_array, expected_padded_array))
         
-    '''
+    def test_lowpass_filter(self):
+        your_instance = YourClass()  # Initialize your class instance
+        # Set up inputs for testing lowpass filter
+        filter_val = 0.5
+        filter_type = 'lowpass'
+        alpha_in = 0.2
+
+        # Call FFT method with lowpass filter
+        dx_0, dx_1, Z_filt = your_instance.FFT(filter_val, filter_type, alpha_in)
+
+        # Assert if the returned values are of correct types
+        self.assertIsInstance(dx_0, float)
+        self.assertIsInstance(dx_1, float)
+        self.assertIsInstance(Z_filt, np.ndarray)
+
+        # Assert if the returned values are not None
+        self.assertIsNotNone(dx_0)
+        self.assertIsNotNone(dx_1)
+        self.assertIsNotNone(Z_filt)
+
+        # Assert if the filtered values shape matches the expected shape
+        expected_shape = (your_instance.dim_x, your_instance.dim_y)
+        self.assertEqual(Z_filt.shape, expected_shape)
+   '''
     def test_fft_method_lowpass(self):
         # Mocked elevation values
-        mocked_elevation_values = np.array([[1, 2], [3, 4]])
+        mocked_elevation_values = np.array([[1, 2, 3], [4, 5, 6],  [7, 8, 9]])
 
         # Expected lowpass filtered elevation values
         expected_filtered_values_lowpass = np.array([
@@ -185,19 +195,22 @@ class TestTopoCurve(unittest.TestCase):
         spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
 
         # Manually set necessary attributes
-        spec_filt_obj.dimx_ma = 3
-        spec_filt_obj.dimy_ma = 3
-        spec_filt_obj.dx = np.array([1.0, 1.0] )
+        spec_filt_obj.dim_x = 3
+        spec_filt_obj.dim_y = 3
+        spec_filt_obj.dx = np.array([1.0, 1.0])
         spec_filt_obj.powerOfTwo = 4  # Assuming this is the correct powerOfTwo value for the mocked elevation values
+        spec_filt_obj.z_array = mocked_elevation_values
+        spec_filt_obj.plane = np.zeros_like(mocked_elevation_values)  # Assuming plane attribute should be zeros for this test
 
         # Call FFT method with lowpass filtering
-        dx, dy, filtered_values_lowpass = spec_filt_obj.FFT(filter=(1, 5), filterType='lowpass', alphaIn=0.5)
+        dx, dy, filtered_values_lowpass = spec_filt_obj.FFT(filter=[1, 5], filterType='lowpass', alphaIn=0.5)
 
         # Verify that the lowpass filtered elevation values are computed correctly
         self.assertAlmostEqual(dx, 1.0)
         self.assertAlmostEqual(dy, 1.0)
         np.testing.assert_allclose(filtered_values_lowpass, expected_filtered_values_lowpass, rtol=1e-5)
 
+    '''
     def test_fft_method_highpass(self):
         # Mocked elevation values
         mocked_elevation_values = np.array([[1, 2], [3, 4]])

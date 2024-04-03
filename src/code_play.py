@@ -1,5 +1,6 @@
 from TopoCurve import TopoCurve
 from SpectralFiltering import SpectralFiltering
+#pip install scikit-learn
 
 # Instantiate TopoCurve object with a GeoTIFF file
 dem = TopoCurve('references\DEM_files\Purgatory.tif')
@@ -16,7 +17,7 @@ K1, K2, KM, KG = dem.CurveCalc(filtered_elevation, dx, dy, 0)
 print(K1, K2, KM, KG)
 
 # Plot and save elevation values
-dem.plot(filtered_elevation, 'output_image.png')
+dem.plot(filtered_elevation, 'output_image1.png')
 
 dx, dy, ZFilt = spectral_filter.FFT([90,100], "lowpass", 0.5)
 dem.plot(ZFilt, "fftdem.png")
