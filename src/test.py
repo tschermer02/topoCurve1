@@ -164,10 +164,10 @@ class TestTopoCurve(unittest.TestCase):
 
         # Call the padding method
         padded_array = spec_filt_obj.padding(alphaIn=0.5)
-        print(padded_array)
+
         # Verify that padding is applied correctly
         self.assertEqual(padded_array.shape, expected_padded_array.shape)
-        self.assertTrue(np.array_equal(padded_array, expected_padded_array))
+        self.assertTrue(np.allclose(padded_array, expected_padded_array, rtol=1e-20, atol=1e-20))
         
     '''
     def test_fft_method_lowpass(self):
