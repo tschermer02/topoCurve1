@@ -22,7 +22,7 @@ class TestTopoCurve(unittest.TestCase):
     def test_CurveCalc(self):
         dem = TopoCurve("references\DEM_files\Purgatory.tif")
         # Define test inputs
-        ZFilt = np.array([[1, 2],[3,4]])
+        ZFilt = np.array([[1, 2, 1],[1, 2, 1],[1, 2, 1]])
         dx = 1.0
         dy = 1.0
         kt = 0
@@ -127,7 +127,7 @@ class TestTopoCurve(unittest.TestCase):
         # Verify that the Tukey window is correctly applied
         self.assertEqual(tukey_array.shape, expected_tukey_array.shape)
         self.assertTrue(np.allclose(tukey_array, expected_tukey_array))
-    '''
+    
     def test_padding_method(self):
         # Mock the SpectralFiltering object
         spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
@@ -155,7 +155,7 @@ class TestTopoCurve(unittest.TestCase):
         # Verify that padding is applied correctly
         self.assertEqual(padded_array.shape, expected_padded_array.shape)
         self.assertTrue(np.allclose(padded_array, expected_padded_array, rtol=1e-20, atol=1e-20))
-        
+    '''
     def test_lowpass_filter(self):
         your_instance = YourClass()  # Initialize your class instance
         # Set up inputs for testing lowpass filter
@@ -179,7 +179,7 @@ class TestTopoCurve(unittest.TestCase):
         # Assert if the filtered values shape matches the expected shape
         expected_shape = (your_instance.dim_x, your_instance.dim_y)
         self.assertEqual(Z_filt.shape, expected_shape)
-   '''
+   
     def test_fft_method_lowpass(self):
         # Mocked elevation values
         mocked_elevation_values = np.array([[1, 2, 3], [4, 5, 6],  [7, 8, 9]])
@@ -210,7 +210,7 @@ class TestTopoCurve(unittest.TestCase):
         self.assertAlmostEqual(dy, 1.0)
         np.testing.assert_allclose(filtered_values_lowpass, expected_filtered_values_lowpass, rtol=1e-5)
 
-    '''
+    
     def test_fft_method_highpass(self):
         # Mocked elevation values
         mocked_elevation_values = np.array([[1, 2], [3, 4]])

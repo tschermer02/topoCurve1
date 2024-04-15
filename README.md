@@ -108,7 +108,7 @@ Initialize the SpectralFiltering object with a GeoTIFF file.
 
 #### `detrend()`
 
-Detrend the elevation values.
+Detrend the elevation values using least squares plane fitting.
 
 - **Returns:**
   - `Z_detrended` (numpy.ndarray): Detrended elevation values.

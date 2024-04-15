@@ -1,6 +1,5 @@
 from TopoCurve import TopoCurve
 from SpectralFiltering import SpectralFiltering
-#pip install scikit-learn
 
 # Instantiate TopoCurve object with a GeoTIFF file
 dem = TopoCurve('references\DEM_files\Purgatory.tif')
