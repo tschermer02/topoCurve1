@@ -198,7 +198,6 @@ class TestTopoCurve(unittest.TestCase):
         self.assertAlmostEqual(dy, 1.0)
         np.testing.assert_allclose(filtered_values_lowpass, expected_filtered_values_lowpass, rtol=1e-5)
 
-    '''
     def test_fft_method_highpass(self):
         # Mocked elevation values
         mocked_elevation_values = np.array([[1, 2], [3, 4]])
