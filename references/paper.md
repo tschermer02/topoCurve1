@@ -54,21 +54,22 @@ Beyond theoretical analysis, TopoCurve is applied to practical problems, such as
 
 By providing a robust, user-friendly interface for these advanced calculations, TopoCurve enables researchers to explore and interpret topographic features with greater accuracy and efficiency, facilitating new insights and applications in the study of Earth's surface processes.
 
+
 # Mathematics
 
 ### Intrinsic Curvature
 
-The intrinsic curvature of a surface is calculated using the following formulas:
+The intrinsic curvature of a surface can be computed using the following formulas:
 
 1. **Principal Curvatures \( K_1 \) and \( K_2 \)**:
 
-   Principal curvatures \( K_1 \) and \( K_2 \) can be determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are the roots of the characteristic polynomial:
+   Principal curvatures \( K_1 \) and \( K_2 \) are determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are the roots of the characteristic polynomial:
 
    $$
    \lambda^2 - \text{tr}(S) \lambda + \text{det}(S) = 0
    $$
 
-   where \( S \) is the shape operator matrix, and \( \text{tr}(S) \) and \( \text{det}(S) \) are the trace and determinant of \( S \), respectively. The principal curvatures are then:
+   where \( S \) is the shape operator matrix, and \( \text{tr}(S) \) and \( \text{det}(S) \) are the trace and determinant of \( S \), respectively. The principal curvatures are given by:
 
    $$
    K_1, K_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
@@ -98,13 +99,13 @@ The extrinsic curvature of a surface involves normal vectors and their derivativ
 
 1. **Normal Vector Derivatives**:
 
-   The normal vectors \( N_x \) and \( N_y \) are derived from the surface normal components:
+   The normal vectors \( \mathbf{N}_x \) and \( \mathbf{N}_y \) are derived from the surface normal components:
 
    $$
    \mathbf{N} = \frac{\mathbf{N}_x}{\| \mathbf{N} \|}, \quad \mathbf{N}_y = \frac{\mathbf{N}_y}{\| \mathbf{N} \|}
    $$
 
-   where \( \mathbf{N}_x \) and \( \mathbf{N}_y \) are the partial derivatives of the normal vector with respect to \( x \) and \( y \).
+   where \( \mathbf{N}_x \) and \( \mathbf{N}_y \) are the partial derivatives of the normal vector with respect to \( x \) and \( y \), respectively.
 
 2. **Second Fundamental Form Coefficients**:
 
@@ -135,6 +136,7 @@ The extrinsic curvature of a surface involves normal vectors and their derivativ
    where \( N_x \) and \( N_y \) are the partial derivatives of the normal vector with respect to \( x \) and \( y \).
 
 These equations and coefficients are fundamental to the analysis of surface geometry and terrain attributes in digital elevation models.
+
 
 
 # Citations
