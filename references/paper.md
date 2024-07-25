@@ -67,15 +67,18 @@ The intrinsic curvature of a surface can be computed using the following formula
 
    $$K_1,K_2=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
 
-   with $a=E\cdot G-F^2$, $b=-(g\cdot E-2\cdot f\cdot F+e\cdot G)$, and $c=e\cdot g-f^2$.
+   with
+   $$a=E\cdot G-F^2$$
+   $$b=-(g\cdot E-2\cdot f\cdot F+e\cdot G)$$
+   $$c=e\cdot g-f^2$$
 
-2. **Gaussian Curvature $K_G$**:
+3. **Gaussian Curvature $K_G$**:
 
    The Gaussian curvature $K_G$ is the product of the principal curvatures:
 
    $$K_G=K_1\cdot K_2$$
 
-3. **Mean Curvature $K_M$**:
+4. **Mean Curvature $K_M$**:
 
    The mean curvature $K_M$ is the average of the principal curvatures:
 
