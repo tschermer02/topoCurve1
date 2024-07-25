@@ -61,33 +61,33 @@ By providing a robust, user-friendly interface for these advanced calculations, 
 
 The intrinsic curvature of a surface can be computed using the following formulas:
 
-1. **Principal Curvatures \( K_1 \) and \( K_2 \)**:
+1. **Principal Curvatures $\( K_1 \)$ and $\( K_2 \)$**:
 
-   Principal curvatures \( K_1 \) and \( K_2 \) are determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are the roots of the characteristic polynomial:
+   Principal curvatures $\( K_1 \)$ and $\( K_2 \)$ are determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are the roots of the characteristic polynomial:
 
    $$
    \lambda^2 - \text{tr}(S) \lambda + \text{det}(S) = 0
    $$
 
-   where \( S \) is the shape operator matrix, and \( \text{tr}(S) \) and \( \text{det}(S) \) are the trace and determinant of \( S \), respectively. The principal curvatures are given by:
+   where $\( S \)$ is the shape operator matrix, and $\( \text{tr}(S) \)$ and $\( \text{det}(S) \)$ are the trace and determinant of $\( S \)$, respectively. The principal curvatures are given by:
 
    $$
    K_1, K_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
    $$
 
-   with \( a = E \cdot G - F^2 \), \( b = - (g \cdot E - 2 \cdot f \cdot F + e \cdot G) \), and \( c = e \cdot g - f^2 \).
+   with $\( a = E \cdot G - F^2 \)$, $\( b = - (g \cdot E - 2 \cdot f \cdot F + e \cdot G) \)$, and $\( c = e \cdot g - f^2 \)$.
 
-2. **Gaussian Curvature \( K_G \)**:
+2. **Gaussian Curvature $\( K_G \)$**:
 
-   The Gaussian curvature \( K_G \) is the product of the principal curvatures:
+   The Gaussian curvature $\( K_G \)$ is the product of the principal curvatures:
 
    $$
    K_G = K_1 \cdot K_2
    $$
 
-3. **Mean Curvature \( K_M \)**:
+3. **Mean Curvature $\( K_M \)$**:
 
-   The mean curvature \( K_M \) is the average of the principal curvatures:
+   The mean curvature $\( K_M \)$ is the average of the principal curvatures:
 
    $$
    K_M = \frac{1}{2} \left( K_1 + K_2 \right)
@@ -99,17 +99,17 @@ The extrinsic curvature of a surface involves normal vectors and their derivativ
 
 1. **Normal Vector Derivatives**:
 
-   The normal vectors \( \mathbf{N}_x \) and \( \mathbf{N}_y \) are derived from the surface normal components:
+   The normal vectors $\( \mathbf{N}_x \)$ and $\( \mathbf{N}_y \)$ are derived from the surface normal components:
 
    $$
    \mathbf{N} = \frac{\mathbf{N}_x}{\| \mathbf{N} \|}, \quad \mathbf{N}_y = \frac{\mathbf{N}_y}{\| \mathbf{N} \|}
    $$
 
-   where \( \mathbf{N}_x \) and \( \mathbf{N}_y \) are the partial derivatives of the normal vector with respect to \( x \) and \( y \), respectively.
+   where $\( \mathbf{N}_x \)$ and $\( \mathbf{N}_y \)$ are the partial derivatives of the normal vector with respect to $\( x \)$ and $\( y \)$, respectively.
 
 2. **Second Fundamental Form Coefficients**:
 
-   The coefficients \( e, f, g \) of the second fundamental form are calculated from:
+   The coefficients $\( e, f, g \)$ of the second fundamental form are calculated from:
 
    $$
    e = - \left( \mathbf{N}_x \cdot \mathbf{S}_U \right)
@@ -123,7 +123,7 @@ The extrinsic curvature of a surface involves normal vectors and their derivativ
    g = - \left( \mathbf{N}_y \cdot \mathbf{S}_V \right)
    $$
 
-   where \( \mathbf{S}_U \) and \( \mathbf{S}_V \) are surface derivatives in the \( u \) and \( v \) directions, respectively.
+   where $\( \mathbf{S}_U \)$ and $\( \mathbf{S}_V \)$ are surface derivatives in the $\( u \)$ and $\( v \)$ directions, respectively.
 
 3. **Mean Curvature \( H \)**:
 
