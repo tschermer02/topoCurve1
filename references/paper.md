@@ -14,10 +14,10 @@ authors:
   equal-contrib: false
   affiliation: 1
 - name: Joel Nash
-  equal-contrib: true
+  equal-contrib: false
   affiliation: 1
 - name: Nate Klema
-  corresponding: true
+- equal-contrib: false
   affiliation: 1
 affiliations:
   - name: Fort Lewis College, United States of America
