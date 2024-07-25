@@ -63,15 +63,10 @@ The intrinsic curvature of a surface can be computed using the following formula
 
 1. **Principal Curvatures $K_1$ and $K_2$**:
 
-   Principal curvatures $ K_1 $ and $K_2 $ are determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are the roots of the characteristic polynomial:
-
-
-   $\lambda^2 - \text{tr}(S) \lambda + \text{det}(S) = 0$
-
-   where $S$ is the shape operator matrix, and $ \text{tr}(S) $ and $ \text{det}(S) $ are the trace and determinant of $ S $, respectively. The principal curvatures are given by:
+   Principal curvatures $K_1$ and $K_2$ are determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are given by:
 
    
-   $K_1, K_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$
+   $$K_1,K_2=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
 
    with $ a = E \cdot G - F^2 $, $ b = - (g \cdot E - 2 \cdot f \cdot F + e \cdot G) $, and $ c = e \cdot g - f^2 $.
 
