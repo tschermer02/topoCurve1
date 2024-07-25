@@ -119,7 +119,7 @@ The extrinsic curvature of a surface involves normal vectors and their derivativ
 
    where $N_x$ and $N_y$ are the partial derivatives of the normal vector with respect to $x$ and $y$.
 
-These equations and coefficients are fundamental to the analysis of surface geometry and terrain attributes in digital elevation models.
+These equations and coefficients are fundamental to the analysis of surface geometry and attributes in digital elevation models.
 
 
 # Citations
