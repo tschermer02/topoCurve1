@@ -33,52 +33,30 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 
 # Summary
 
-The forces on stars, galaxies, and dark matter under external gravitational
-fields lead to the dynamical evolution of structures in the universe. The orbits
-of these bodies are therefore key to understanding the formation, history, and
-future state of galaxies. The field of "galactic dynamics," which aims to model
-the gravitating components of galaxies to study their structure and evolution,
-is now well-established, commonly taught, and frequently used in astronomy.
-Aside from toy problems and demonstrations, the majority of problems require
-efficient numerical tools, many of which require the same base code (e.g., for
-performing numerical orbit integration).
+The analysis of digital elevation models (DEMs) is crucial for understanding 
+and interpreting landscape features and their formations. The curvature and 
+surface attributes of surface features provide insights into geological processes and 
+environmental conditions. `TopoCurve` is a Python package designed to analyze 
+and process DEMs by calculating various curvature attributes, including principal,
+Gaussian, and mean curvatures. This tool facilitates the extraction and 
+classification of surface attributes, aiding in the interpretation of topographic data.
+The package leverages efficient numerical methods and advanced processing techniques 
+to handle large datasets, making it a valuable asset for researchers and practitioners 
+in geomatics, geography, and earth sciences.
 
 # Statement of need
 
-`Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
+`TopoCurve` addresses a significant need in the field of topographic surface analysis by providing a specialized Python package for calculating and visualizing curvature attributes. Python's versatility allows for the integration of advanced numerical methods and algorithms while maintaining an accessible and user-friendly interface. `TopoCurve` provides a comprehensive set of tools for analyzing terrain attributes, such as curvature and surface classification, through a well-structured API. This includes functionalities for calculating principal curvatures, Gaussian and mean curvatures, and generating curvature maps based on elevation data. This tool is particularly valuable for researchers and professionals in geomorphology, volcanology, and related fields who require precise and computationally efficient methods for analyzing surface topography.
 
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the _Gaia_ mission
-[@gaia] by students and experts alike.
+The mathematical foundation of `TopoCurve` is rooted in the classical work of Gauss (1827), which laid the groundwork for differential geometry and Riemannian manifolds. By using Gauss's method for curvature derivation, TopoCurve offers a computationally faster alternative to modern matrix-based approaches, making it suitable for large datasets and real-time applications. The package focuses on the derivation of intrinsic and extrinsic curvatures of topographic surfaces and includes functionalities for spectral filtering and scale selection.
+
+Beyond theoretical analysis, TopoCurve is applied to practical problems, such as mapping groundwater in the Oregon Cascades, and has attracted interest from high-level geomorphologists and volcanologists eager to leverage its capabilities. The package builds on existing work in the spectral domain, including the approach of Perron et al. (2008), and incorporates rigorous methods for filtering and characterizing topography. Additionally, it draws inspiration from the curvature classification methods of Bergbauer and Pollard (2001), adapted to suit the needs of contemporary topographic analysis.
+
+By providing a robust, user-friendly interface for these advanced calculations, TopoCurve enables researchers to explore and interpret topographic features with greater accuracy and efficiency, facilitating new insights and applications in the study of Earth's surface processes.
+
 
 # Mathematics
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
-
-Double dollars make self-standing equations:
-
-$$
-\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.
-$$
-
-You can also use plain \LaTeX for equations
 \begin{equation}\label{eq:fourier}
 \hat f(\omega) = \int\_{-\infty}^{\infty} f(x) e^{i\omega x} dx
 \end{equation}
