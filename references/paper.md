@@ -61,7 +61,7 @@ By providing a robust, user-friendly interface for these advanced calculations, 
 
 The intrinsic curvature of a surface can be computed using the following formulas:
 
-1. **Principal Curvatures $K_1 $ and $ K_2 $**:
+1. **Principal Curvatures $K_1$ and $K_2$**:
 
    Principal curvatures $ K_1 $ and $K_2 $ are determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are the roots of the characteristic polynomial:
 
