@@ -208,5 +208,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
+## Credits
+
+- **Principal Contributor:** [Sonie Taylor Schermer](https://github.com/tschermer02)
+- **Contributions:** [Joel Nash](https://github.com/tschermer02](https://github.com/jxnash), [Nate Klema](https://github.com/ntklema)
+
+
+
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 ```
