@@ -54,7 +54,6 @@ Beyond theoretical analysis, TopoCurve is applied to practical problems, such as
 
 By providing a robust, user-friendly interface for these advanced calculations, TopoCurve enables researchers to explore and interpret topographic features with greater accuracy and efficiency, facilitating new insights and applications in the study of Earth's surface processes.
 
-
 # Mathematics
 
 ### Intrinsic Curvature
@@ -136,6 +135,7 @@ The extrinsic curvature of a surface involves normal vectors and their derivativ
    where \( N_x \) and \( N_y \) are the partial derivatives of the normal vector with respect to \( x \) and \( y \).
 
 These equations and coefficients are fundamental to the analysis of surface geometry and terrain attributes in digital elevation models.
+
 
 # Citations
 
