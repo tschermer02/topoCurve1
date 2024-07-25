@@ -211,7 +211,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Credits
 
 - **Principal Contributor:** [Sonie Taylor Schermer](https://github.com/tschermer02)
-- **Contributions:**  [Joel Nash](https://github.com/jxnash) ,[Nate Klema](https://github.com/ntklema)
+- **Contributions:**  [Joel Nash](https://github.com/jxnash), [Nate Klema](https://github.com/ntklema)
 
 
 
