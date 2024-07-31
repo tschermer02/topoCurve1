@@ -34,8 +34,7 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 # Summary
 
 The analysis of digital elevation models (DEMs) is crucial for understanding 
-and interpreting landscape features and their formations. The curvature and 
-surface attributes of surface features provide insights into geological processes and 
+and interpreting landscape features and their formations. The curvature and attributes of surface features provide insights into geological processes and 
 environmental conditions. `TopoCurve` is a Python package designed to analyze 
 and process DEMs by calculating various curvature attributes, including principal,
 Gaussian, and mean curvatures. This tool facilitates the extraction and 
