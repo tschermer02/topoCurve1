@@ -33,9 +33,7 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 
 # Summary
 
-The analysis of digital elevation models (DEMs) is crucial for understanding 
-and interpreting landscape features and their formations. The curvature and attributes of surface features provide insights into geological processes and 
-environmental conditions. `TopoCurve` is a Python package designed to analyze 
+The analysis of digital elevation models (DEMs) is crucial for understanding and interpreting landscape features and their formations, as the curvature and attributes of surface features provide insights into geological processes and environmental conditions. `TopoCurve` is a Python package designed to analyze 
 and process DEMs by calculating various curvature attributes, including principal,
 Gaussian, and mean curvatures. This tool facilitates the extraction and 
 classification of surface attributes, aiding in the interpretation of topographic data.
@@ -45,13 +43,13 @@ in geomatics, geography, and earth sciences.
 
 # Statement of need
 
-`TopoCurve` addresses a need in the field of topographic surface analysis by providing a Python package that integrates advanced numerical methods for calculating and visualizing curvature attributes. It provides a comprehensive set of tools for analyzing curvature and surface classification. This includes functionalities for calculating principal curvatures, Gaussian and mean curvatures, and generating curvature maps based on elevation data. This tool is valuable for researchers and professionals in geomorphology, volcanology, and related fields who require precise and computationally efficient methods for analyzing surface topography.
+`TopoCurve` addresses a need in the field of topographic surface analysis by providing a Python package that integrates advanced numerical methods for calculating and visualizing curvature attributes. It provides a comprehensive set of tools for analyzing curvature and surface classification. This includes functionalities for calculating principal curvatures, Gaussian and mean curvatures, and performing spectral filtering based on elevation data. This tool is valuable for researchers and professionals in geomorphology, volcanology, and related fields who require precise and computationally efficient methods for analyzing surface topography.
 
 The mathematical foundation of `TopoCurve` is based on the classical work of Gauss (1827), which laid the groundwork for differential geometry and Riemannian manifolds. By using Gauss's method for curvature derivation, `TopoCurve` offers a computational alternative to matrix-based approaches. The package focuses on the derivation of intrinsic and extrinsic curvatures of topographic surfaces and includes functionalities for spectral filtering and scale selection.
 
 TopoCurve has drawn the interest of geomorphologists and volcanologists, eager to utilize its capabilities for practical applications like mapping groundwater in the Oregon Cascades. The package builds on existing work in the spectral domain, including the approach of Perron et al. (2008), and incorporates methods for filtering and characterizing topography. Additionally, it draws inspiration from the curvature classification methods of Bergbauer and Pollard (2001), adapted for the needs of topographic analysis.
 
-By providing a robust, user-friendly interface for these advanced calculations, `TopoCurve` enables researchers to explore and interpret topographic features with greater accuracy and efficiency, facilitating new insights and applications in the study of Earth's surface processes.
+By providing a robust, user-friendly interface for these calculations, `TopoCurve` enables researchers to explore and interpret topographic features with greater accuracy and efficiency, promoting new insights and applications in the study of Earth's surface processes.
 
 
 # Mathematics
