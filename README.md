@@ -171,15 +171,15 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ├── Makefile             
 ├── README.md           
 ├── TC-removebg-preview.png <- Project logo.
-│
+
 ├── docs/                <- Documentation source files for the project:
-│   ├── Makefile        
-│   ├── commands.rst     
-│   ├── conf.py          
-│   ├── getting-started.rst 
-│   ├── index.rst        
-│   └── make.bat        
-│
+    ├── Makefile        
+    ├── commands.rst     
+    ├── conf.py          
+    ├── getting-started.rst 
+    ├── index.rst        
+    └── make.bat        
+    
 ├── references/          <- Supporting files and research materials:
 │   ├── DEM_files/       <- Contains Digital Elevation Model (DEM) test files.
 │   ├── paper.md         <- Markdown file with detailed project research or report.
