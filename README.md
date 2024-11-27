@@ -166,29 +166,29 @@ Apply FFT filtering to the elevation values.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Project Organization
-
+```
 ├── LICENSE              
 ├── Makefile             
 ├── README.md           
 ├── TC-removebg-preview.png <- Project logo.
 
 ├── docs/                <- Documentation source files for the project:
-    ├── Makefile        
-    ├── commands.rst     
-    ├── conf.py          
-    ├── getting-started.rst 
-    ├── index.rst        
-    └── make.bat        
-    
+│   ├── Makefile        
+│   ├── commands.rst     
+│   ├── conf.py          
+│   ├── getting-started.rst 
+│   ├── index.rst        
+│   └── make.bat        
+
 ├── references/          <- Supporting files and research materials:
 │   ├── DEM_files/       <- Contains Digital Elevation Model (DEM) test files.
 │   ├── paper.md         <- Markdown file with detailed project research or report.
 │   └── .gitkeep        
-│
+
 ├── reports/             <- Generated analyses and reports:
 │   ├── figures/         <- Directory for report graphics and visualizations.
 │   └── .gitkeep    
-│
+
 ├── requirements.txt     
 ├── setup.py             
 ├── src/                 <- Source code for the project:
@@ -197,11 +197,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 │   ├── TopoCurve.py     <- Core script for curvature calculations and DEM processing.
 │   ├── code_play.py     <- Experimental script with templates for further development.
 │   └── test.py          <- Unit tests to validate functionality.
-│
-├── test_environment.py  
-└── tox.ini             
 
----
+├── test_environment.py  
+└── tox.ini              
+```
 
 ## Credits
 
