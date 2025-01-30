@@ -1,7 +1,8 @@
 ---
-title: "TopoCurve: A Python package for galactic dynamics"
+title: "TopoCurve: A Python Package for Advanced Digital Elevation Model Analysis"
 tags:
   - Python
+<<<<<<< HEAD
   - geology
   - topography
   - curvature
@@ -21,14 +22,29 @@ authors:
     dropping-particle: van
     surname: Beethoven
     affiliation: 3
+=======
+  - Digital Elevation Models
+  - Curvature Analysis
+  - Geographic Information Systems (GIS)
+  - Topographic Modeling
+  - Geospatial Analysis
+  - Environmental Modeling
+authors:
+- name: Sonie T. Schermer
+  orcid: 0009-0005-9439-4470
+  equal-contrib: false
+  affiliation: 1
+- name: Joel Nash
+  equal-contrib: false
+  affiliation: 1
+- name: Nate Klema
+- equal-contrib: false
+  affiliation: 1
+>>>>>>> 1f2a0fe76024e38493d656c6ca1f95bdddcd1c56
 affiliations:
-  - name: Lyman Spitzer, Jr. Fellow, Princeton University, USA
+  - name: Fort Lewis College, United States of America
     index: 1
-  - name: Institution Name, Country
-    index: 2
-  - name: Independent Researcher, Country
-    index: 3
-date: 13 August 2017
+date: 25 July 2024
 bibliography: paper.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
@@ -39,56 +55,91 @@ aas-journal: Astrophysical Journal <- The name of the AAS journal.
 
 # Summary
 
-The forces on stars, galaxies, and dark matter under external gravitational
-fields lead to the dynamical evolution of structures in the universe. The orbits
-of these bodies are therefore key to understanding the formation, history, and
-future state of galaxies. The field of "galactic dynamics," which aims to model
-the gravitating components of galaxies to study their structure and evolution,
-is now well-established, commonly taught, and frequently used in astronomy.
-Aside from toy problems and demonstrations, the majority of problems require
-efficient numerical tools, many of which require the same base code (e.g., for
-performing numerical orbit integration).
+The analysis of digital elevation models (DEMs) is crucial for understanding and interpreting landscape features and their formations, as the curvature and attributes of surface features provide insights into geological processes and environmental conditions. `TopoCurve` is a Python package designed to analyze 
+and process DEMs by calculating various curvature attributes, including principal,
+Gaussian, and mean curvatures. This tool facilitates the extraction and 
+classification of surface attributes, aiding in the interpretation of topographic data.
+The package leverages efficient numerical methods and advanced processing techniques 
+to handle large datasets, making it a valuable asset for researchers and practitioners 
+in geomatics, geography, and earth sciences.
 
 # Statement of need
 
-`Gala` is an Astropy-affiliated Python package for galactic dynamics. Python
-enables wrapping low-level languages (e.g., C) for speed without losing
-flexibility or ease-of-use in the user-interface. The API for `Gala` was
-designed to provide a class-based and user-friendly interface to fast (C or
-Cython-optimized) implementations of common operations such as gravitational
-potential and force evaluation, orbit integration, dynamical transformations,
-and chaos indicators for nonlinear dynamics. `Gala` also relies heavily on and
-interfaces well with the implementations of physical units and astronomical
-coordinate systems in the `Astropy` package [@astropy] (`astropy.units` and
-`astropy.coordinates`).
+`TopoCurve` addresses a need in the field of topographic surface analysis by providing a Python package that integrates advanced numerical methods for calculating and visualizing curvature attributes. It provides a comprehensive set of tools for analyzing curvature and surface classification. This includes functionalities for calculating principal curvatures, Gaussian and mean curvatures, and performing spectral filtering based on elevation data. This tool is valuable for researchers and professionals in geomorphology, volcanology, and related fields who require precise and computationally efficient methods for analyzing surface topography.
 
-`Gala` was designed to be used by both astronomical researchers and by
-students in courses on gravitational dynamics or astronomy. It has already been
-used in a number of scientific publications [@Pearson:2017] and has also been
-used in graduate courses on Galactic dynamics to, e.g., provide interactive
-visualizations of textbook material [@Binney:2008]. The combination of speed,
-design, and support for Astropy functionality in `Gala` will enable exciting
-scientific explorations of forthcoming data releases from the _Gaia_ mission
-[@gaia] by students and experts alike.
+The mathematical foundation of `TopoCurve` is based on the classical work of Gauss (1827), which laid the groundwork for differential geometry and Riemannian manifolds. By using Gauss's method for curvature derivation, `TopoCurve` offers a computational alternative to matrix-based approaches. The package focuses on the derivation of intrinsic and extrinsic curvatures of topographic surfaces and includes functionalities for spectral filtering and scale selection.
+
+TopoCurve has drawn the interest of geomorphologists and volcanologists, eager to utilize its capabilities for practical applications like mapping groundwater in the Oregon Cascades. The package builds on existing work in the spectral domain, including the approach of Perron et al. (2008), and incorporates methods for filtering and characterizing topography. Additionally, it draws inspiration from the curvature classification methods of Bergbauer and Pollard (2001), adapted for the needs of topographic analysis.
+
+By providing a robust, user-friendly interface for these calculations, `TopoCurve` enables researchers to explore and interpret topographic features with greater accuracy and efficiency, promoting new insights and applications in the study of Earth's surface processes.
+
 
 # Mathematics
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
+### Intrinsic Curvature
 
-Double dollars make self-standing equations:
+The intrinsic curvature of a surface can be computed using the following formulas:
 
-$$
-\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.
-$$
+1. **Principal Curvatures $K_1$ and $K_2$**:
 
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int\_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text.
+   Principal curvatures $K_1$ and $K_2$ are determined from the coefficients of the second fundamental form and the first fundamental form. The principal curvatures are given by:
+
+   $$K_1,K_2=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
+
+   with:
+   
+   $$a=E\cdot G-F^2$$
+   
+   $$b=-(g\cdot E-2\cdot f\cdot F+e\cdot G)$$
+   
+   $$c=e\cdot g-f^2$$
+
+3. **Gaussian Curvature $K_G$**:
+
+   The Gaussian curvature $K_G$ is the product of the principal curvatures:
+
+   $$K_G=K_1\cdot K_2$$
+
+4. **Mean Curvature $K_M$**:
+
+   The mean curvature $K_M$ is the average of the principal curvatures:
+
+   $$K_M=\frac{1}{2}\left(K_1+K_2\right)$$
+
+### Extrinsic Curvature
+
+The extrinsic curvature of a surface involves normal vectors and their derivatives. The calculations include:
+
+1. **Normal Vector Derivatives**:
+
+   The normal vectors $\mathbf{N}_x$ and $\mathbf{N}_y$ are derived from the surface normal components:
+
+   $$\mathbf{N}=\frac{\mathbf{N}_x}{\|\mathbf{N}\|},\quad \mathbf{N}_y=\frac{\mathbf{N}_y}{\|\mathbf{N}\|}$$
+
+   where $\mathbf{N}_x$ and $\mathbf{N}_y$ are the partial derivatives of the normal vector with respect to $x$ and $y$, respectively.
+
+2. **Second Fundamental Form Coefficients**:
+
+   The coefficients $e, f, g$ of the second fundamental form are calculated from:
+
+   $$e=-\left(\mathbf{N}_x\cdot\mathbf{S}_U\right)$$
+
+   $$f=-0.5\left(\mathbf{N}_x\cdot\mathbf{S}_V+\mathbf{N}_y\cdot\mathbf{S}_U\right)$$
+
+   $$g=-\left(\mathbf{N}_y\cdot\mathbf{S}_V\right)$$
+
+   where $\mathbf{S}_U$ and $\mathbf{S}_V$ are surface derivatives in the $u$ and $v$ directions, respectively.
+
+3. **Mean Curvature $H$**:
+
+   The mean curvature $H$ is derived from:
+
+   $$H=\frac{1}{2}\left(\frac{E\cdot N_x+F\cdot (N_x+N_y)+G\cdot N_y}{E\cdot G-F^2}\right)$$
+
+   where $N_x$ and $N_y$ are the partial derivatives of the normal vector with respect to $x$ and $y$.
+
+These equations and coefficients are fundamental to the analysis of surface geometry and attributes in digital elevation models.
+
 
 # Citations
 

@@ -1,5 +1,6 @@
-# TopoCurve
+![TopoCurve Logo](./TC-removebg-preview.png)
 
+# TopoCurve
 TopoCurve is a Python library for processing digital elevation models (DEM) stored in GeoTIFF format. This library provides functionalities to extract metadata, calculate principal curvatures and curvature features, as well as plot elevation values. It also includes spectral filtering capabilities for advanced DEM processing.
 
 ## Installation
@@ -165,48 +166,48 @@ Apply FFT filtering to the elevation values.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Project Organization
+```
+├── LICENSE              
+├── Makefile             
+├── README.md           
+├── TC-removebg-preview.png <- Project logo.
 
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+├── docs/                <- Documentation source files for the project:
+│   ├── Makefile        
+│   ├── commands.rst     
+│   ├── conf.py          
+│   ├── getting-started.rst 
+│   ├── index.rst        
+│   └── make.bat        
 
----
+├── references/          <- Supporting files and research materials:
+│   ├── DEM_files/       <- Contains Digital Elevation Model (DEM) test files.
+│   ├── paper.md         <- Markdown file with detailed project research or report.
+│   └── .gitkeep        
+
+├── reports/             <- Generated analyses and reports:
+│   ├── figures/         <- Directory for report graphics and visualizations.
+│   └── .gitkeep    
+
+├── requirements.txt     
+├── setup.py             
+├── src/                 <- Source code for the project:
+│   ├── __init__.py      
+│   ├── SpectralFiltering.py <- Contains FFT-based spectral filtering methods.
+│   ├── TopoCurve.py     <- Core script for curvature calculations and DEM processing.
+│   ├── code_play.py     <- Experimental script with templates for further development.
+│   └── test.py          <- Unit tests to validate functionality.
+
+├── test_environment.py  
+└── tox.ini              
+```
+
+## Credits
+
+- **Principal Contributor:** [Sonie Taylor Schermer](https://github.com/tschermer02)
+- **Contributions:**  [Joel Nash](https://github.com/jxnash), [Nate Klema](https://github.com/ntklema)
+
+
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 ```
