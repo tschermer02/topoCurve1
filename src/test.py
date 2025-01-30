@@ -19,42 +19,52 @@ class TestTopoCurve(unittest.TestCase):
         self.assertIsInstance(topo_curve_obj.metadata, dict)  # Check if metadata is a dictionary
         # Add more assertions to check specific metadata if needed
         import unittest
-    '''
+        
     def test_curve_calc_with_known_input(self):
-        # Known input data
-        ZFilt = np.array([[1, 2, 3],
-                          [4, 5, 6],
-                          [7, 8, 9]])
+        """Test CurveCalc method with a known input matrix."""
+        # Mocked elevation data (ZFilt)
+        ZFilt = np.array([
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ])
+
+        # Grid spacing
         dx = 1.0
         dy = 1.0
-        kt = 0
+        kt = 0  # Assuming a zero curvature threshold
 
-        # Manually compute the expected output
-        expected_K1 = np.array([[],
-                                [],
-                                []])
-        expected_K2 = np.array([[],
-                                [],
-                                []])
-        expected_KM = np.array([[],
-                                [],
-                                []])
-        expected_KG = np.array([[],
-                                [],
-                                []])
+        # Expected curvature outputs (Example values; modify as needed)
+        expected_K1 = np.array([
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ])
+        expected_K2 = np.array([
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ])
+        expected_KM = np.array([
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ])
+        expected_KG = np.array([
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ])
 
-        # Initialize a TopoCurve object
-        topo_curve_obj = TopoCurve("references\DEM_files\Purgatory.tif")
+        # Call CurveCalc
+        K1, K2, KM, KG = self.topo_curve_obj.CurveCalc(ZFilt, dx, dy, kt)
 
-        # Call the CurveCalc method with the known input data
-        K1, K2, KM, KG = topo_curve_obj.CurveCalc(ZFilt, dx, dy, kt)
+        # Verify that the outputs match expected curvature values
+        np.testing.assert_allclose(K1, expected_K1, rtol=1e-5)
+        np.testing.assert_allclose(K2, expected_K2, rtol=1e-5)
+        np.testing.assert_allclose(KM, expected_KM, rtol=1e-5)
+        np.testing.assert_allclose(KG, expected_KG, rtol=1e-5)
 
-        # Assert that the method returns the expected principal curvatures and curvature features
-        np.testing.assert_array_equal(K1, expected_K1)
-        np.testing.assert_array_equal(K2, expected_K2)
-        np.testing.assert_array_equal(KM, expected_KM)
-        np.testing.assert_array_equal(KG, expected_KG)
-    '''
     def test_initialization_inherits_metadata(self):
         # Mock the TopoCurve initialization to return metadata
         mock_metadata = {'GeogAngularUnitsGeoKey': 4326, 'ProjLinearUnitsGeoKey': 9001}  # Example metadata
@@ -168,9 +178,10 @@ class TestTopoCurve(unittest.TestCase):
         # Verify that padding is applied correctly
         self.assertEqual(padded_array.shape, expected_padded_array.shape)
         self.assertTrue(np.allclose(padded_array, expected_padded_array, rtol=1e-15, atol=1e-15))
+
         
-    '''
     def test_fft_method_lowpass(self):
+        """Test FFT method with a lowpass filter."""
         # Mocked elevation values
         mocked_elevation_values = np.array([[1, 2], [3, 4]])
 
@@ -181,24 +192,29 @@ class TestTopoCurve(unittest.TestCase):
             [0.01149374, 0.18236484, 0.01149374]
         ])
 
-        # Create SpectralFiltering object
-        spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
+        # Initialize attributes required for FFT
+        self.spec_filt_obj.z_array = mocked_elevation_values
+        self.spec_filt_obj.dimx_ma = 3
+        self.spec_filt_obj.dimy_ma = 3
+        self.spec_filt_obj.dx = np.array([1.0, 1.0])
+        self.spec_filt_obj.powerOfTwo = 4  
 
-        # Manually set necessary attributes
-        spec_filt_obj.dimx_ma = 3
-        spec_filt_obj.dimy_ma = 3
-        spec_filt_obj.dx = np.array([1.0, 1.0] )
-        spec_filt_obj.powerOfTwo = 4  # Assuming this is the correct powerOfTwo value for the mocked elevation values
+        # Mock detrend
+        mocked_plane = np.array([[2, 2], [3, 3]])  
+        mocked_detrended = mocked_elevation_values - mocked_plane
+        self.spec_filt_obj.detrend = lambda: (mocked_detrended, mocked_plane)
+        self.spec_filt_obj.plane = mocked_plane  
 
         # Call FFT method with lowpass filtering
-        dx, dy, filtered_values_lowpass = spec_filt_obj.FFT(filter=(1, 5), filterType='lowpass', alphaIn=0.5)
+        dx, dy, filtered_values_lowpass = self.spec_filt_obj.FFT(filter=(1, 5), filterType='lowpass', alphaIn=0.5)
 
-        # Verify that the lowpass filtered elevation values are computed correctly
+        # Assertions
         self.assertAlmostEqual(dx, 1.0)
         self.assertAlmostEqual(dy, 1.0)
         np.testing.assert_allclose(filtered_values_lowpass, expected_filtered_values_lowpass, rtol=1e-5)
 
     def test_fft_method_highpass(self):
+        """Test FFT method with a highpass filter."""
         # Mocked elevation values
         mocked_elevation_values = np.array([[1, 2], [3, 4]])
 
@@ -209,22 +225,25 @@ class TestTopoCurve(unittest.TestCase):
             [-0.01149374, -0.18236484, -0.01149374]
         ])
 
-        # Create SpectralFiltering object
-        spec_filt_obj = SpectralFiltering("references\DEM_files\Purgatory.tif")
+        # Initialize attributes required for FFT
+        self.spec_filt_obj.z_array = mocked_elevation_values
+        self.spec_filt_obj.dimx_ma = 3
+        self.spec_filt_obj.dimy_ma = 3
+        self.spec_filt_obj.dx = np.array([1.0, 1.0])
+        self.spec_filt_obj.powerOfTwo = 4  
 
-        # Manually set necessary attributes
-        spec_filt_obj.dimx_ma = 3
-        spec_filt_obj.dimy_ma = 3
-        spec_filt_obj.dx = np.array([1.0, 1.0] )
-        spec_filt_obj.powerOfTwo = 4  # Assuming this is the correct powerOfTwo value for the mocked elevation values
+        # Mock detrend
+        mocked_plane = np.array([[2, 2], [3, 3]])  
+        mocked_detrended = mocked_elevation_values - mocked_plane
+        self.spec_filt_obj.detrend = lambda: (mocked_detrended, mocked_plane)
+        self.spec_filt_obj.plane = mocked_plane  
 
         # Call FFT method with highpass filtering
-        dx, dy, filtered_values_highpass = spec_filt_obj.FFT(filter=(1, 5), filterType='highpass', alphaIn=0.5)
+        dx, dy, filtered_values_highpass = self.spec_filt_obj.FFT(filter=(1, 5), filterType='highpass', alphaIn=0.5)
 
-        # Verify that the highpass filtered elevation values are computed correctly
+        # Assertions
         self.assertAlmostEqual(dx, 1.0)
         self.assertAlmostEqual(dy, 1.0)
         np.testing.assert_allclose(filtered_values_highpass, expected_filtered_values_highpass, rtol=1e-5)
-        '''
-if __name__ == '__main__':
+
     unittest.main()
