@@ -19,9 +19,9 @@ class TestTopoCurve(unittest.TestCase):
         self.assertIsInstance(topo_curve_obj.metadata, dict)  # Check if metadata is a dictionary
         # Add more assertions to check specific metadata if needed
         import unittest
-        
+
     def test_curve_calc_with_known_input(self):
-        """Test CurveCalc method with a known input matrix."""
+        #Test CurveCalc method with a known input matrix
         # Mocked elevation data (ZFilt)
         ZFilt = np.array([
             [1, 2, 3],
