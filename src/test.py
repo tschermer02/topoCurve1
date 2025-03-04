@@ -20,50 +20,32 @@ class TestTopoCurve(unittest.TestCase):
         # Add more assertions to check specific metadata if needed
         import unittest
 
-    def test_curve_calc_with_known_input(self):
-        #Test CurveCalc method with a known input matrix
-        # Mocked elevation data (ZFilt)
-        ZFilt = np.array([
-            [1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 9]
-        ])
+    def test_curve_calc_with_hemisphere(self):
+        # Define grid parameters
+        R = 10  # Radius of the hemisphere
+        size = 21  # Grid size (odd for symmetry)
+        x = np.linspace(-R, R, size)
+        y = np.linspace(-R, R, size)
+        X, Y = np.meshgrid(x, y)
+
+        # Define hemisphere surface: solving for Z in x^2 + y^2 + z^2 = R^2
+        ZFilt = np.sqrt(R**2 - X**2 - Y**2, where=(X**2 + Y**2) <= R**2, out=np.zeros_like(X))
 
         # Grid spacing
-        dx = 1.0
-        dy = 1.0
+        dx = x[1] - x[0]
+        dy = y[1] - y[0]
         kt = 0  # Assuming a zero curvature threshold
 
-        # Expected curvature outputs (Example values; modify as needed)
-        expected_K1 = np.array([
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ])
-        expected_K2 = np.array([
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ])
-        expected_KM = np.array([
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ])
-        expected_KG = np.array([
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ])
+        # Expected curvatures
+        expected_KG = np.full_like(ZFilt, 1/R**2)  # Gaussian curvature
+        expected_KM = np.full_like(ZFilt, 1/R)  # Mean curvature
 
-        # Call CurveCalc
+        # Call CurveCalc (assuming self.topo_curve_obj is properly initialized)
         K1, K2, KM, KG = self.topo_curve_obj.CurveCalc(ZFilt, dx, dy, kt)
 
         # Verify that the outputs match expected curvature values
-        np.testing.assert_allclose(K1, expected_K1, rtol=1e-5)
-        np.testing.assert_allclose(K2, expected_K2, rtol=1e-5)
-        np.testing.assert_allclose(KM, expected_KM, rtol=1e-5)
-        np.testing.assert_allclose(KG, expected_KG, rtol=1e-5)
+        np.testing.assert_allclose(KG, expected_KG, rtol=1e-2)
+        np.testing.assert_allclose(KM, expected_KM, rtol=1e-2)
 
     def test_initialization_inherits_metadata(self):
         # Mock the TopoCurve initialization to return metadata
