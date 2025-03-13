@@ -175,14 +175,22 @@ class SpectralFiltering (TopoCurve):
                 kfilt = np.divide(np.ones_like(filter), filter)  # Generate the filter kernel
                 sigma = abs(kfilt[1] - kfilt[0]) / 3  # Compute sigma for Gaussian filter
                 F = np.exp(np.multiply(-1, np.square(km - kfilt[0])) / (2 * sigma**2))  # Compute the filter
-                F = F / np.max(F)  # Normalize the filter
+                # Prevent division by zero
+                if np.max(F) > 0:
+                    F = F / np.max(F)  # Normalize the filter
+                else:
+                    print("Warning: Max filter value is zero, skipping normalization.")
                 F[km < kfilt[0]] = 1  # Apply lowpass filter
                 
             case 'highpass':
                 kfilt = np.divide(np.ones_like(filter), filter)  # Generate the filter kernel
                 sigma = abs(kfilt[1] - kfilt[0]) / 3  # Compute sigma for Gaussian filter
                 F = np.exp(np.multiply(-1, np.square(km - kfilt[0])) / (2 * sigma**2))  # Compute the filter
-                F = F / np.max(F)  # Normalize the filter
+                # Prevent division by zero
+                if np.max(F) > 0:
+                    F = F / np.max(F)  # Normalize the filter
+                else:
+                    print("Warning: Max filter value is zero, skipping normalization.")              
                 F[km >= kfilt[1]] = 1  # Apply highpass filter
 
         ZMWF = np.real(ifft2(np.multiply(fft_array, F)))  # Apply inverse FFT to get filtered elevation values
