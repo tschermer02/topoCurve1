@@ -141,7 +141,7 @@ class SpectralFiltering (TopoCurve):
         # Pads array
         padded_window_array = np.pad(tukey_array, ((self.pad_x_max, self.pad_x_min), (self.pad_y_max, self.pad_y_min)), 'constant', constant_values=(0, 0))
         return padded_window_array  # Return the padded elevation values
-
+    
     def FFT(self, filter, filterType, alphaIn):
         """
         Apply FFT filtering to the elevation values.
