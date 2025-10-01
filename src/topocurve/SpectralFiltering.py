@@ -4,7 +4,7 @@ import numpy as np
 from scipy.fft import fft2, ifft2
 from photutils.psf import TukeyWindow
 from scipy import signal
-from TopoCurve import TopoCurve
+from .TopoCurve import TopoCurve
 from sklearn.linear_model import LinearRegression
 
 class SpectralFiltering (TopoCurve):

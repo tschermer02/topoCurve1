@@ -1,7 +1,7 @@
 # Reversibility_Test.py
 import numpy as np
 import matplotlib.pyplot as plt
-from SpectralFiltering import SpectralFiltering  # adjust import if your path differs
+from src.topocurve.SpectralFiltering import SpectralFiltering  # adjust import if your path differs
 
 # --- synthetic surface ---
 def generate_surface(size=128, scale=10.0):
