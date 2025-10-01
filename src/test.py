@@ -3,8 +3,8 @@ from unittest.mock import patch, MagicMock
 import numpy as np
 from scipy.fft import fft2, ifft2
 from photutils.psf import TukeyWindow
-from SpectralFiltering import SpectralFiltering
-from TopoCurve import TopoCurve
+from topocurve.SpectralFiltering import SpectralFiltering
+from topocurve.TopoCurve import TopoCurve
 
 class TestTopoCurve(unittest.TestCase):
     def test_valid_geotiff_metadata_extraction(self):
