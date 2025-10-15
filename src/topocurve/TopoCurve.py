@@ -126,9 +126,9 @@ class TopoCurve ():
         SV[:, :, 2] = SZV
         
         # Calculate coefficients for quadratic forms
-        E = np.sum(SU * SU, axis=2)
-        F = np.sum(SU * SV, axis=2)
-        G = np.sum(SV * SV, axis=2)
+        E = np.einsum('ijk,ijk->ij', SU, SU)
+        F = np.einsum('ijk,ijk->ij', SU, SV)
+        G = np.einsum('ijk,ijk->ij', SV, SV)
         
         # Calculate curvature tensor
         CUV = np.cross(SU, SV, axis=2)
@@ -173,8 +173,8 @@ class TopoCurve ():
         b = -(g * E - 2 * f * F + e * G)
         c = e * g - f ** 2
 
-        K1 = (-b + np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
-        K2 = (-b - np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
+        K1 = -(-b + np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
+        K2 = -(-b - np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
         
         # Apply threshold to curvature values
         K1[np.abs(K1) <= kt] = 0
