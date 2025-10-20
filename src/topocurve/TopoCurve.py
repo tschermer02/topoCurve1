@@ -105,14 +105,15 @@ class TopoCurve ():
         m, n = SZ.shape
         
         # Initialize arrays for derivatives
-        SXU = np.ones_like(SX) * dx
+        SXU = np.ones_like(SX)
         SXV = np.zeros_like(SX)
         SYU = np.zeros_like(SY)
-        SYV = np.ones_like(SY) * dy
+        SYV = np.ones_like(SY) 
         
         # Calculate first-order derivatives of surface
-        SZU, SZV = np.gradient(SZ, du, dv)
-        
+        SZV, SZU = np.gradient(SZ, dv, du)
+        SZV = -SZV
+         
         # Initialize arrays for surface derivatives
         SU = np.zeros((m, n, 3))
         SV = np.zeros((m, n, 3))
@@ -133,6 +134,7 @@ class TopoCurve ():
         # Calculate curvature tensor
         CUV = np.cross(SU, SV, axis=2)
         AC = np.sqrt(np.sum(CUV ** 2, axis=2))
+        AC = np.maximum(AC, 1e-12) 
         
         # Calculate normal vectors
         NX = CUV[:, :, 0] / AC
@@ -140,9 +142,9 @@ class TopoCurve ():
         NZ = CUV[:, :, 2] / AC
         
         # Calculate second-order derivatives of normal vectors
-        NXU, NXV = np.gradient(NX, du, dv)
-        NYU, NYV = np.gradient(NY, du, dv)
-        NZU, NZV = np.gradient(NZ, du, dv)
+        NXV, NXU = np.gradient(NX, dv, du)
+        NYV, NYU = np.gradient(NY, dv, du)
+        NZV, NZU = np.gradient(NZ, dv, du)
         
         # Initialize arrays for normal vector derivatives
         NU = np.zeros((m, n, 3))
@@ -172,6 +174,8 @@ class TopoCurve ():
         a = E * G - F ** 2
         b = -(g * E - 2 * f * F + e * G)
         c = e * g - f ** 2
+
+        a = np.maximum(a, 1e-12) 
 
         K1 = -(-b + np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
         K2 = -(-b - np.sqrt(np.abs(b ** 2 - 4 * a * c))) / (2 * a)
