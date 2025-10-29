@@ -68,33 +68,6 @@ class TopoCurve ():
             self.dx_dy = self.dx[0]  # If spacing is uniform, assign it to dx_dy
         else:
             raise Exception("WARNING: Grid spacing is not uniform in x and y directions!")  # Raise a warning if grid spacing is not uniform
-    
-    @staticmethod
-    def gradient(Z, dx, dy):
-        """
-        Compute 4th-order accurate central differences (5-point stencil)
-        for a 2D array Z. Returns dZ/dx, dZ/dy.
-        """
-        dZdx = np.zeros_like(Z)
-        dZdy = np.zeros_like(Z)
-
-        # Interior points (4th-order central)
-        dZdx[:, 2:-2] = (-Z[:, 4:] + 8*Z[:, 3:-1] - 8*Z[:, 1:-3] + Z[:, :-4]) / (12*dx)
-        dZdy[2:-2, :] = (-Z[4:, :] + 8*Z[3:-1, :] - 8*Z[1:-3, :] + Z[:-4, :]) / (12*dy)
-
-        # 2nd-order at boundaries (fallback)
-        dZdx[:, 0]  = (Z[:, 1] - Z[:, 0]) / dx
-        dZdx[:, 1]  = (Z[:, 2] - Z[:, 0]) / (2*dx)
-        dZdx[:, -2] = (Z[:, -1] - Z[:, -3]) / (2*dx)
-        dZdx[:, -1] = (Z[:, -1] - Z[:, -2]) / dx
-
-        dZdy[0, :]  = (Z[1, :] - Z[0, :]) / dy
-        dZdy[1, :]  = (Z[2, :] - Z[0, :]) / (2*dy)
-        dZdy[-2, :] = (Z[-1, :] - Z[-3, :]) / (2*dy)
-        dZdy[-1, :] = (Z[-1, :] - Z[-2, :]) / dy
-
-        return dZdx, dZdy
-
 
     def CurveCalc(self, ZFilt, dx, dy, kt):
         """
@@ -103,11 +76,10 @@ class TopoCurve ():
         """
         # --- 1. Setup ---
         Z = ZFilt
-        eps = 1e-12
 
         # --- 2. First derivatives ---
         # np.gradient returns [dZ/dy, dZ/dx] by default → specify spacings explicitly
-        SZU, SZV = np.gradient(Z, dx, dy) # dZ/dx, dZ/dy
+        SZV, SZU = np.gradient(Z, dy, dx) # dZ/dx, dZ/dy
 
         # --- Tangent vectors (parameterization basis, right-handed) ---
         SXU = np.ones_like(Z)
@@ -120,16 +92,15 @@ class TopoCurve ():
 
         # --- Normal vector (ensure right-handedness) ---
         # Use cross(SV, SU) instead of cross(SU, SV)
-        CUV = -np.cross(SU, SV, axis=2)
-        SU = -SU
-        AC  = np.sqrt(np.sum(CUV**2, axis=2))
-        AC  = np.maximum(AC, 1e-12)
-        NX, NY, NZ = CUV[...,0]/AC, CUV[...,1]/AC, CUV[...,2]/AC
+        CUV = np.cross(SU, SV, axis=2)
+        AC = np.linalg.norm(CUV, axis=2)
+        NX, NY, NZ = (CUV[..., 0] / AC, CUV[..., 1] / AC, CUV[..., 2] / AC)
+
 
         # --- 5. Normal derivatives ---
-        NXU, NXV = np.gradient(NX, dx, dy)
-        NYU, NYV = np.gradient(NY, dx, dy)
-        NZU, NZV = np.gradient(NZ, dx, dy)
+        NXV, NXU = np.gradient(NX, dy, dx)
+        NYV, NYU = np.gradient(NY, dy, dx)
+        NZV, NZU = np.gradient(NZ, dy, dx)
 
         # --- 6. First fundamental form coefficients ---
         E = np.einsum('ijk,ijk->ij', SU, SU)
@@ -137,19 +108,21 @@ class TopoCurve ():
         G = np.einsum('ijk,ijk->ij', SV, SV)
 
         # --- 7. Second fundamental form coefficients ---
-        NU = np.stack((NXU, NYU, NZU), axis=2)
-        NV = np.stack((NXV, NYV, NZV), axis=2)
-        e = np.sum(NU * np.stack((NX, NY, NZ), axis=2) * 0 + (-1) * NU * SU, axis=2)
-        f = -0.5 * (np.sum(NU * SV, axis=2) + np.sum(NV * SU, axis=2))
-        g = -np.sum(NV * SV, axis=2)
+        # Compute normal derivatives (already: NXU, NXV, NYU, NYV, NZU, NZV)
+        NU = np.stack((NXU, NYU, NZU), axis=2)  # ∂N/∂u (x-direction)
+        NV = np.stack((NXV, NYV, NZV), axis=2)  # ∂N/∂v (y-direction)
+
+        # Second fundamental form coefficients
+        e = -np.einsum('ijk,ijk->ij', NU, SU)
+        f = -0.5 * (np.einsum('ijk,ijk->ij', NU, SV) + np.einsum('ijk,ijk->ij', NV, SU))
+        g = -np.einsum('ijk,ijk->ij', NV, SV)
 
         # --- 8. Principal curvatures ---
         a = E * G - F**2
         b = -(g * E - 2 * f * F + e * G)
         c = e * g - f**2
-        a = np.maximum(a, eps)
 
-        K2 = (-b + np.sqrt(np.abs(b**2 - 4 * a * c))) / (2 * a)
+        K2 = -(-b + np.sqrt(np.abs(b**2 - 4 * a * c))) / (2 * a)
         K1 = -(-b - np.sqrt(np.abs(b**2 - 4 * a * c))) / (2 * a)
 
         # --- 9. Threshold small values ---
