@@ -1,8 +1,7 @@
 # topo_curve/topo_curve/spectralfiltering.py
 import math
 import numpy as np
-from scipy.fft import fft2, ifft2
-from photutils.psf import TukeyWindow
+from scipy.fft import fftshift, fft2, ifftshift, ifft2
 from scipy import signal
 from .TopoCurve import TopoCurve
 from sklearn.linear_model import LinearRegression
@@ -99,16 +98,14 @@ class SpectralFiltering (TopoCurve):
         Returns:
             tukey_array (numpy.ndarray): Elevation values after applying the Tukey window.
         """
-        mirrored_array = self.mirror_dem()  # Mirror the elevation values
-        taper = TukeyWindow(alpha=alphaIn)  # Create a TukeyWindow object
-        data = taper((len(mirrored_array), len(mirrored_array[0])))  # Apply the Tukey window
-        tukey_array = np.multiply(data, mirrored_array)  # Multiply the window with the elevation values
-
-        self.dim_x = self.z_array.shape[0]  # Store the dimensions of the original array
-        self.dim_y = self.z_array.shape[1]
-    
-        return tukey_array  # Return the elevation values after applying the Tukey window
-
+        mirrored_array = self.mirror_dem() # Mirror the elevation values
+        wy = signal.tukey(len(mirrored_array), alpha=alphaIn)
+        wx = signal.tukey(len(mirrored_array[0]), alpha=alphaIn)
+        data = np.outer(wy, wx)
+        tukey_array = np.multiply(data, mirrored_array)
+        self.dim_x, self.dim_y = self.z_array.shape
+        return tukey_array # Return the elevation values after applying the Tukey window
+        
     def padding(self, alphaIn):  # Define a method to pad elevation values
         """
         Pad the elevation values.
@@ -139,7 +136,12 @@ class SpectralFiltering (TopoCurve):
         self.pad_y_min = math.floor((self.powerOfTwo - self.dimy_ma) / 2)
 
         # Pads array
-        padded_window_array = np.pad(tukey_array, ((self.pad_x_max, self.pad_x_min), (self.pad_y_max, self.pad_y_min)), 'constant', constant_values=(0, 0))
+        padded_window_array = np.pad(
+            tukey_array,
+            ((self.pad_y_max, self.pad_y_min), (self.pad_x_max, self.pad_x_min)),
+            mode='constant',
+            constant_values=0
+        )
         return padded_window_array  # Return the padded elevation values
     
     def FFT(self, filter, filterType, alphaIn):
@@ -156,25 +158,22 @@ class SpectralFiltering (TopoCurve):
         """
         padded_window_array = self.padding(alphaIn)  # Pad the elevation values
         # Doing fft on the windowed and padded array
-        fft_array = fft2(padded_window_array)  # Compute 2-dimensional FFT of the padded array
+        fft_array = fftshift(fft2(padded_window_array))   # use shifted FFT
+        cy = self.powerOfTwo // 2
+        cx = self.powerOfTwo // 2
+        fft_array[cy, cx] = 0.0                          # zero DC term
 
-        self.dx = np.array(self.dx)  # Convert grid spacing to a NumPy array
-        self.powerOfTwo = np.array(self.powerOfTwo)  # Convert the power of two to a NumPy array
-        dkx = np.divide(1, (self.dx[0] * self.powerOfTwo))  # Compute the spacing in the frequency domain in x-direction
-        dky = np.divide(1, (self.dx[0] * self.powerOfTwo))  # Compute the spacing in the frequency domain in y-direction
-
-        xc = self.powerOfTwo / 2 + 1  # Get the matrix indices of zero wavenumber in x-direction
-        yc = self.powerOfTwo / 2 + 1  # Get the matrix indices of zero wavenumber in y-direction
-
-        i, j = np.meshgrid(np.arange(self.powerOfTwo), np.arange(self.powerOfTwo))  # Create a grid of coordinates
-        km = np.sqrt(np.square(dky * (i - yc)) + np.square(dkx * (j - xc)))  # Compute the distance from the zero wavenumber
+        dkx = 1.0 / (float(self.dx) * self.powerOfTwo)
+        dky = 1.0 / (float(self.dy) * self.powerOfTwo)
+        cols, rows = np.meshgrid(np.arange(self.powerOfTwo), np.arange(self.powerOfTwo))
+        km = np.sqrt((dky * (rows - cy))**2 + (dkx * (cols - cx))**2)
 
         # Apply filter based on filter type
         match filterType:
             case 'lowpass':
-                kfilt = np.divide(np.ones_like(filter), filter)  # Generate the filter kernel
-                sigma = abs(kfilt[1] - kfilt[0]) / 3  # Compute sigma for Gaussian filter
-                F = np.exp(np.multiply(-1, np.square(km - kfilt[0])) / (2 * sigma**2))  # Compute the filter
+                kfilt = 1.0 / np.array(filter, dtype=float) # Generate the filter kernel
+                sigma = abs(kfilt[1] - kfilt[0]) / 3.0 # Compute sigma for Gaussian filter
+                F = np.exp(-((km - kfilt[0])**2) / (2 * sigma**2)) # Compute the filter
                 # Prevent division by zero
                 if np.max(F) > 0:
                     F = F / np.max(F)  # Normalize the filter
@@ -183,9 +182,9 @@ class SpectralFiltering (TopoCurve):
                 F[km < kfilt[0]] = 1  # Apply lowpass filter
                 
             case 'highpass':
-                kfilt = np.divide(np.ones_like(filter), filter)  # Generate the filter kernel
-                sigma = abs(kfilt[1] - kfilt[0]) / 3  # Compute sigma for Gaussian filter
-                F = np.exp(np.multiply(-1, np.square(km - kfilt[0])) / (2 * sigma**2))  # Compute the filter
+                kfilt = 1.0 / np.array(filter, dtype=float) # Generate the filter kernel
+                sigma = abs(kfilt[1] - kfilt[0]) / 3.0 # Compute sigma for Gaussian filter
+                F = np.exp(-((km - kfilt[1])**2) / (2 * sigma**2))  # Compute the filter
                 # Prevent division by zero
                 if np.max(F) > 0:
                     F = F / np.max(F)  # Normalize the filter
@@ -193,12 +192,13 @@ class SpectralFiltering (TopoCurve):
                     print("Warning: Max filter value is zero, skipping normalization.")              
                 F[km >= kfilt[1]] = 1  # Apply highpass filter
 
-        ZMWF = np.real(ifft2(np.multiply(fft_array, F)))  # Apply inverse FFT to get filtered elevation values
+        ZMWF = np.real(ifft2(ifftshift(np.multiply(fft_array, F))))  # Apply inverse FFT to get filtered elevation values
 
         self.Filter = filter  # Store the filter parameter
         # Extract the filtered elevation values and add back the trend component
-        self.ZFilt = ZMWF[(self.pad_x_max + self.dim_x): -(self.pad_x_min + self.dim_x), 
-                        (self.pad_y_max + self.dim_y): -(self.pad_y_min + self.dim_y)] + self.plane
+        ny, nx = padded_window_array.shape
+        r, c = self.z_array.shape
+        self.ZFilt = ZMWF[r:ny - r, c:nx - c] + self.plane
         self.ZDiff = self.z_array - self.ZFilt  # Compute the difference between original and filtered elevation values
 
         return self.dx[0], self.dx[1], self.ZFilt  # Return the filtered elevation values
