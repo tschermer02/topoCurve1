@@ -8,7 +8,6 @@ from PIL import Image
 from tifffile import TiffFile
 from geotiff import GeoTiff
 
-
 class TopoCurve():
     """
     A class for processing digital elevation models (DEM).
