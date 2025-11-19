@@ -13,48 +13,68 @@ cd topo_curve
 pip install -r requirements.txt
 ```
 
-## Usage
+## Usage & Example from pip install
 
 ```
-from TopoCurve import TopoCurve
-from SpectralFiltering import SpectralFiltering
+!pip install topocurve
 
-# Instantiate TopoCurve object with a GeoTIFF file
-dem = TopoCurve('path/to/your/file.tif')
+from topocurve import TopoCurve, SpectralFiltering
 
-# Instantiate SpectralFiltering object with a GeoTIFF file
-spectral_filter = SpectralFiltering('path/to/your/file.tif')
+# Define the path to the TIFF file
+tiff_file = 'path/to/tif'
 
-# Apply FFT filtering
-dx, dy, filtered_elevation = spectral_filter.FFT(filter, 'filtertype', alphaIn)
+# Instantiate TopoCurve object
+dem = TopoCurve(tiff_file)
 
-# Calculate principal curvatures and curvature features
-K1, K2, KM, KG = dem.CurveCalc(ZFilt, dx, dy, kt)
+# Instantiate SpectralFiltering object
+spectral_filter = SpectralFiltering(tiff_file)
 
-# Plot and save elevation values
-dem.plot(input_array, 'output_image.png')
+# Apply FFT filtering with a lowpass filter at 150-200
+dx, dy, ZFilt = spectral_filter.FFT([150, 200], 'lowpass', 0.5)
+
+# Compute curvature attributes
+K1, K2, KM, KG, SMAP, SDist, CMAP = dem.CurveCalc(ZFilt1, dx, dy, 0)
+
+# Plot the filtered elevation values
+dem.plot(ZFilt,
+          title="Filtered DEM (150–500 m)",
+          cmap="terrain",
+          cbar_label="Elevation (m)",
+          filename="filtered_dem_1.png",
+          tiff_file=tiff_file)
+
 ```
-
-## Example
-
+## Usage & Example from git
 ```
-from TopoCurve import TopoCurve
-from SpectralFiltering import SpectralFiltering
+import os, sys
+sys.path.append(os.path.abspath(".."))
 
-# Instantiate TopoCurve object with a GeoTIFF file
-dem = TopoCurve('references\DEM_files\Purgatory.tif')
+from topocurve.TopoCurve import TopoCurve
+from topocurve.SpectralFiltering import SpectralFiltering
 
-# Instantiate SpectralFiltering object with a GeoTIFF file
-spectral_filter = SpectralFiltering('references\DEM_files\Purgatory.tif')
+# Define the path to the TIFF file
+tiff_file = 'path/to/tif'
 
-# Apply FFT filtering
-dx, dy, filtered_elevation = spectral_filter.FFT([190, 200], 'lowpass', 0)
+# Instantiate TopoCurve object
+dem = TopoCurve(tiff_file)
 
-# Calculate principal curvatures and curvature features
-K1, K2, KM, KG = dem.CurveCalc(filtered_elevation, dx, dy, 0)
+# Instantiate SpectralFiltering object
+spectral_filter = SpectralFiltering(tiff_file)
 
-# Plot and save elevation values
-dem.plot(filtered_elevation, 'output_image.png')
+# Apply FFT filtering with a lowpass filter at 150-200
+dx, dy, ZFilt = spectral_filter.FFT([150, 200], 'lowpass', 0.5)
+
+# Compute curvature attributes
+K1, K2, KM, KG, SMAP, SDist, CMAP = dem.CurveCalc(ZFilt1, dx, dy, 0)
+
+# Plot the filtered elevation values
+dem.plot(ZFilt,
+          title="Filtered DEM (150–500 m)",
+          cmap="terrain",
+          cbar_label="Elevation (m)",
+          filename="filtered_dem_1.png",
+          tiff_file=tiff_file)
+
 ```
 
 ## API Documentation
@@ -67,36 +87,78 @@ Initialize the TopoCurve object with a GeoTIFF file.
 
 - **Parameters:**
   - `tiff_file` (str): Path to the GeoTIFF file.
+- Loads:
+  - Elevation array (`z_array`)
+  - DEM dimensions (`dimx`, `dimy`)
+  - Pixel scale and tiepoints
+  - Projected CRS information
+  - Ensures uniform grid spacing
 
 ---
 
 #### `CurveCalc(ZFilt, dx, dy, kt)`
 
-Calculate principal curvatures and curvature features.
+Compute curvature attributes and the full SMAP classification.
 
 - **Parameters:**
-
-  - `ZFilt` (numpy.ndarray): Filtered surface data.
-  - `dx` (float): Grid spacing in the x direction.
-  - `dy` (float): Grid spacing in the y direction.
-  - `kt` (float): Threshold value.
+  - `ZFilt` (numpy.ndarray): Filtered DEM surface.
+  - `dx` (float): Grid spacing in x-direction.
+  - `dy` (float): Grid spacing in y-direction.
+  - `kt` (float): Curvature threshold/tolerance.
 
 - **Returns:**
-  - `K1, K2` (tuple): Principal curvatures.
-  - `KM` (tuple): Mean curvature.
-  - `KG` (tuple): Gaussian curvature.
+  - `K1` — minimum principal curvature  
+  - `K2` — maximum principal curvature  
+  - `KM` — mean curvature  
+  - `KG` — Gaussian curvature  
+  - `SMAP` — classification map 
+  - `SDist` — distribution statistics  
+  - `CMAP` — dictionary of curvatures
 
 ---
 
-#### `plot(input, filename)`
+#### `get_latlon_extent(tiff_file)`
 
-Plot the elevation values and save the plot as an image file to reports/figures.
+Extract the geographic bounds for plotting.
 
 - **Parameters:**
-  - `input` (numpy.ndarray): Input elevation values.
-  - `filename` (str): Name of the output image file.
+  - `tiff_file` (str): Path to the DEM GeoTIFF.
+
+- **Returns:**
+  - `[lon_min, lon_max, lat_min, lat_max]`
 
 ---
+
+#### `plot(array, title, cmap, cbar_label, filename, tiff_file, output_dir)`
+
+Generic plotting function for DEMs, filtered DEMs, and curvature fields.
+
+- **Parameters:**
+  - `array` (numpy.ndarray): Data to plot.
+  - `title` (str): Plot title.
+  - `cmap` (str): Colormap name.
+  - `cbar_label` (str): Colorbar label.
+  - `filename` (str): Output filename.
+  - `tiff_file` (str): GeoTIFF used for extent.
+  - `output_dir` (str): Save directory.
+
+---
+
+#### `plot_smap(SMAP, tiff_file, title, output_dir)`
+
+Plot the SMAP classification using hillshade + color overlays.
+
+- **Parameters:**
+  - `SMAP` (numpy.ndarray): Classification map.
+  - `tiff_file` (str): GeoTIFF used for extent.
+  - `title` (str): Plot title.
+  - `output_dir` (str): Save directory.
+
+- Produces:
+  - Hillshade grayscale base
+  - SMAP overlay with transparency
+  - Full legend for all 7 classes
+  - Saves as `smap.png`
 
 ### Spectral Filtering Class
 
@@ -167,44 +229,56 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Project Organization
 ```
-├── LICENSE              
-├── Makefile             
-├── README.md           
-├── TC-removebg-preview.png <- Project logo.
+├── LICENSE
+├── Makefile
+├── README.md
+├── TC-removebg-preview.png         # Project logo
 
-├── docs/                <- Documentation source files for the project:
-│   ├── Makefile        
-│   ├── commands.rst     
-│   ├── conf.py          
-│   ├── getting-started.rst 
-│   ├── index.rst        
-│   └── make.bat        
+├── docs/                           # Sphinx documentation
+│   ├── Makefile
+│   ├── commands.rst
+│   ├── conf.py
+│   ├── getting-started.rst
+│   ├── index.rst
+│   └── make.bat
 
-├── references/          <- Supporting files and research materials:
-│   ├── DEM_files/       <- Contains Digital Elevation Model (DEM) test files.
-│   ├── paper.md         <- Markdown file with detailed project research or report.
-│   └── .gitkeep        
+├── references/                     # Background sources, DEMs, papers
+│   ├── DEM_files/                  # Sample DEM test datasets
+│   ├── paper.md                    # Project report / research notes
+│   └── .gitkeep
 
-├── reports/             <- Generated analyses and reports:
-│   ├── figures/         <- Directory for report graphics and visualizations.
-│   └── .gitkeep    
+├── reports/                        # Generated results
+│   ├── figures/                    # Auto-saved plots from TopoCurve
+│   └── .gitkeep
 
-├── requirements.txt     
-├── setup.py             
-├── src/                 <- Source code for the project:
-│   ├── __init__.py      
-│   ├── SpectralFiltering.py <- Contains FFT-based spectral filtering methods.
-│   ├── TopoCurve.py     <- Core script for curvature calculations and DEM processing.
-│   ├── code_play.py     <- Experimental script with templates for further development.
-│   └── test.py          <- Unit tests to validate functionality.
+├── requirements.txt
+├── setup.py
+├── test_environment.py
+├── tox.ini
 
-├── test_environment.py  
-└── tox.ini              
+├── src/                            # All Python source code
+│   ├── __init__.py
+│   ├── test.py                     # Basic tests
+│   │
+│   ├── topocurve/                  # Core TopoCurve library (importable)
+│   │   ├── __init__.py
+│   │   ├── TopoCurve.py            # DEM loading, curvature, SMAP, plotting
+│   │   └── SpectralFiltering.py    # FFT low/high/bandpass filtering tools
+│   │
+│   ├── test_scripts/               # Example notebooks + reproducible demos
+│   │   ├── example.ipynb
+│   │   ├── example_sphere.ipynb
+│   │   └── Reversibility_Test.py
+│   │
+│   └── code_play.py                # Sandbox for experimentation
+
+└── .env                            # Local virtual environment (ignored)
+        
 ```
 
 ## Credits
 
-- **Principal Contributor:** [Sonie Taylor Schermer](https://github.com/tschermer02)
+- **Principal Contributor:** [Taylor Schermer](https://github.com/tschermer02)
 - **Contributions:**  [Joel Nash](https://github.com/jxnash), [Nate Klema](https://github.com/ntklema), [Leif Karlstrom](https://github.com/leifkarlstrom)
 
 
