@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='topocurve',
-    version='0.1.1',
+    version='0.1.2',
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     install_requires=[
@@ -14,7 +14,10 @@ setup(
         'photutils>=1.8,<2.0',
         'tifffile<2024.8',
         'geotiff', 
-        'scikit-learn'
+        'scikit-learn', 
+        'rasterio',
+        'pyproj',
+        'matplotlib'
     ],
     python_requires='>=3.6',
     author='Taylor Schermer, Joel Nash, Nate Klema',
