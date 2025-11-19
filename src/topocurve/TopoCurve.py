@@ -1,12 +1,19 @@
 # topo_curve/topo_curve/topocurve.py
 import os
 import math
-import numpy as np
+import numpy as np 
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
+import rasterio
+
+from pyproj import Transformer
 from scipy.fft import fft2, ifft2
 from photutils.psf import TukeyWindow
 from PIL import Image
 from tifffile import TiffFile
 from geotiff import GeoTiff
+from matplotlib.colors import ListedColormap, BoundaryNorm
+from matplotlib.patches import Patch
 
 class TopoCurve():
     """
@@ -138,21 +145,203 @@ class TopoCurve():
         KM = 0.5 * (K1 + K2)  # Mean curvature
         KG = K1 * K2           # Gaussian curvature
 
-        return K1, K2, KM, KG
+        SMAP = np.empty_like(KG) * np.nan
+        SDist = [[None] * 9, [None] * 9]
 
-    def plot(self, input, filename):
+        tol = kt  # use kt also as classification tolerance
+
+        # Perfect Saddles: KG < 0, KM ≈ 0
+        in_ = np.where((KG < -tol) & (np.abs(KM) <= tol))
+        SMAP[in_] = -4
+        SDist[0][0] = ['Perfect Saddles']
+        SDist[1][0] = np.size(in_) / np.size(SMAP)
+
+        # Peaks: KG > 0, KM < 0
+        in_ = np.where((KG > tol) & (KM < -tol))
+        SMAP[in_] = -3
+        SDist[0][1] = ['Peaks']
+        SDist[1][1] = np.size(in_) / np.size(SMAP)
+
+        # Antiformal Saddles: KG < 0, KM < 0
+        in_ = np.where((KG < -tol) & (KM < -tol))
+        SMAP[in_] = -2
+        SDist[0][2] = ['Antiformal Saddles']
+        SDist[1][2] = np.size(in_) / np.size(SMAP)
+
+        # Antiforms: KG ≈ 0, KM < 0
+        in_ = np.where((np.abs(KG) <= tol) & (KM < -tol))
+        SMAP[in_] = -1
+        SDist[0][3] = ['Antiforms']
+        SDist[1][3] = np.size(in_) / np.size(SMAP)
+
+        # Planes: KG ≈ 0, KM ≈ 0
+        in_ = np.where((np.abs(KG) <= tol) & (np.abs(KM) <= tol))
+        SMAP[in_] = 0
+        SDist[0][4] = ['Planes']
+        SDist[1][4] = np.size(in_) / np.size(SMAP)
+
+        # Synforms: KG ≈ 0, KM > 0
+        in_ = np.where((np.abs(KG) <= tol) & (KM > tol))
+        SMAP[in_] = 1
+        SDist[0][5] = ['Synforms']
+        SDist[1][5] = np.size(in_) / np.size(SMAP)
+
+        # Synformal Saddles: KG < 0, KM > 0
+        in_ = np.where((KG < -tol) & (KM > tol))
+        SMAP[in_] = 2
+        SDist[0][6] = ['Synformal Saddles']
+        SDist[1][6] = np.size(in_) / np.size(SMAP)
+
+        # Basins: KG > 0, KM > 0
+        in_ = np.where((KG > tol) & (KM > tol))
+        SMAP[in_] = 3
+        SDist[0][7] = ['Basins']
+        SDist[1][7] = np.size(in_) / np.size(SMAP)
+
+        # ----------
+        CMAP = {
+            'KG': KG,
+            'KM': KM,
+            'K1': K1,
+            'K2': K2,
+        }
+
+        return K1, K2, KM, KG, SMAP, SDist, CMAP
+
+    
+    def get_latlon_extent(self, tiff_path):
         """
-        Plot the elevation values and save the plot as an image file.
-
-        Args:
-            input (numpy.ndarray): Input elevation values.
-            filename (str): Name of the output image file.
+        Extracts geographic extent (lon/lat bounding box) from a DEM GeoTIFF.
+        Returns:
+            [lon_min, lon_max, lat_min, lat_max]
         """
-        output_dir = '../topoCurve1/reports/figures/'  # Define the output directory
-        os.makedirs(output_dir, exist_ok=True)  # Create directory if it doesn't exist
 
-        # Normalize input values to range [0, 255] and convert to uint8
-        img_array = 255 * ((input - np.amin(input)) / (np.amax(input) - np.amin(input)))
+        # Open the GeoTIFF
+        with rasterio.open(tiff_path) as src:
+            transform = src.transform
+            width = src.width
+            height = src.height
+            crs_projected = src.crs
 
-        # Convert array to RGB image and save it
-        Image.fromarray(img_array.astype(np.uint8)).convert("RGB").save(output_dir + filename)
+            # Upper-left corner
+            X1, Y1 = transform * (0, 0)
+
+            # Lower-right corner
+            X2, Y2 = transform * (width, height)
+
+        # Build transformer from DEM CRS → WGS84
+        tf = Transformer.from_crs(crs_projected, "EPSG:4326", always_xy=True)
+
+        # Convert corners to lon/lat
+        lon_min, lat_max = tf.transform(X1, Y1)   # upper-left
+        lon_max, lat_min = tf.transform(X2, Y2)   # lower-right
+
+        return [lon_min, lon_max, lat_min, lat_max]
+
+    
+    def plot(self, array, title, cmap, cbar_label, filename, tiff_file,
+             output_dir="../../reports/figures/"):
+        """
+        Generic plotting function for DEM, filtered DEM, curvature fields, etc.
+        """
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Get geographic extent
+        extent = self.get_latlon_extent(tiff_file)
+
+        plt.figure(figsize=(10, 6))
+        plt.imshow(array, cmap=cmap, extent=extent, origin='upper')
+        plt.colorbar(label=cbar_label)
+
+        plt.title(title)
+        plt.xlabel("Longitude (°W)")
+        plt.ylabel("Latitude (°N)")
+
+        # Tick formatting
+        ax = plt.gca()
+        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter('%.5f'))
+        ax.yaxis.set_major_formatter(mticker.FormatStrFormatter('%.5f'))
+
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_dir, filename), dpi=300)
+        plt.close()
+
+        print(f"Saved: {filename}")
+
+
+    def plot_smap(self, SMAP, tiff_file, title="SMAP Classification", output="./../reports/figures/smap.png"):
+        """
+        Plot SMAP classification using your hillshade + curvature color rules,
+        but without changing SMAP values themselves.
+        """
+
+        extent = self.get_latlon_extent(tiff_file)
+
+        # Colors mapped to SMAP values
+        color_list = {
+            -3: (0.33, 0.00, 0.00, 1.0),   # Dome (deep maroon)
+            -2: (0.95, 0.28, 0.26, 1.0),   # Antiformal Saddle (bright red)
+            -1: (0.80, 0.20, 0.15, 1.0),   # Antiform (rust red)
+            0: (1.00, 1.00, 1.00, 1.0),   # Plane (white)
+            1: (0.55, 0.85, 0.90, 1.0),   # Synform (mid cyan)
+            2: (0.78, 0.95, 0.98, 1.0),   # Synformal Saddle (cyan)
+            3: (0.11, 0.30, 0.95, 1.0)    # Basin (deep blue)
+        }
+
+        # Build colormap and norm
+        keys = sorted(color_list.keys())  # [-3,-2,-1,0,1,2,3]
+        colors = [color_list[k] for k in keys]
+
+        cmap = ListedColormap(colors)
+        bounds = [-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5]
+        norm = BoundaryNorm(bounds, cmap.N)
+
+        # Compute hillshade for base layer
+        Z = self.z_array
+        azimuth=315 
+        altitude=45
+        az = np.deg2rad(azimuth)
+        alt = np.deg2rad(altitude)
+
+        dy, dx = np.gradient(Z)
+        slope = np.pi/2 - np.arctan(np.sqrt(dx*dx + dy*dy))
+        aspect = np.arctan2(-dx, dy)
+
+        shaded = (np.sin(alt) * np.sin(slope) + np.cos(alt) * np.cos(slope) * np.cos(az - aspect))
+
+        hillshade = (shaded - shaded.min()) / (shaded.max() - shaded.min())
+           
+
+        # Plot
+        plt.figure(figsize=(10, 8))
+        plt.imshow(hillshade, cmap="gray", extent=extent, origin="upper")
+        plt.imshow(SMAP, cmap=cmap, norm=norm, alpha=0.55, extent=extent, origin="upper")
+
+        plt.title(title)
+        plt.xlabel("Longitude (°W)")
+        plt.ylabel("Latitude (°N)")
+
+        ax = plt.gca()
+        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter('%.4f'))
+        ax.yaxis.set_major_formatter(mticker.FormatStrFormatter('%.4f'))
+
+        # Legend
+        labels = [
+            "Dome (KG>0, KM<0)",
+            "Antiformal Saddle (KG<0, KM<0)",
+            "Antiform (KG≈0, KM<0)",
+            "Plane (KG≈0, KM≈0)",
+            "Synform (KG≈0, KM>0)",
+            "Synformal Saddle (KG<0, KM>0)",
+            "Basin (KG>0, KM>0)"
+        ]
+
+        patches = [Patch(color=colors[i], label=labels[i]) for i in range(7)]
+        plt.legend(handles=patches, loc="lower right", fontsize=8, frameon=True)
+
+        plt.tight_layout()
+        plt.savefig(output, dpi=300)
+        plt.show()
+
+        print(f"Saved: {output}")
