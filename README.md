@@ -167,6 +167,8 @@ Plot the SMAP classification using hillshade + color overlays.
   - Full legend for all 7 classes
   - Saves as `smap.png`
 
+---
+
 ### Spectral Filtering Class
 
 #### `SpectralFiltering(tiff_file)`
@@ -176,6 +178,8 @@ Initialize the SpectralFiltering object with a GeoTIFF file.
 - **Parameters:**
   - `tiff_file` (str): Path to the GeoTIFF file.
 
+---
+
 #### `detrend()`
 
 Detrend the elevation values using least squares plane fitting.
@@ -184,12 +188,16 @@ Detrend the elevation values using least squares plane fitting.
   - `Z_detrended` (numpy.ndarray): Detrended elevation values.
   - `plane` (numpy.ndarray): Trend component of the elevation values.
 
+---
+
 #### `mirror_dem()`
 
 Mirror the elevation values.
 
 - **Returns:**
   - `mirrored_array` (numpy.ndarray): Mirrored elevation values.
+
+---
 
 #### `tukeyWindow(alphaIn)`
 
@@ -202,6 +210,8 @@ Apply a Tukey window to the elevation values.
 - **Returns:**
   - `tukey_array` (numpy.ndarray): Elevation values after applying the Tukey window.
 
+---
+
 #### `padding(alphaIn)`
 
 Pad the elevation values.
@@ -212,6 +222,8 @@ Pad the elevation values.
 
 - **Returns:**
   - `padded_window_array` (numpy.ndarray): Padded elevation values.
+
+---
 
 #### `FFT(filter, filterType, alphaIn)`
 
