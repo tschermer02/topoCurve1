@@ -265,12 +265,12 @@ class TopoCurve():
 
         plt.tight_layout()
         plt.savefig(os.path.join(output_dir, filename), dpi=300)
-        plt.close()
+        plt.show()
 
         print(f"Saved: {filename}")
 
 
-    def plot_smap(self, SMAP, tiff_file, title="SMAP Classification", output="./../reports/figures/smap.png"):
+    def plot_smap(self, SMAP, tiff_file, title="SMAP Classification", output_dir="../../reports/figures/"):
         """
         Plot SMAP classification using your hillshade + curvature color rules,
         but without changing SMAP values themselves.
@@ -311,7 +311,6 @@ class TopoCurve():
         shaded = (np.sin(alt) * np.sin(slope) + np.cos(alt) * np.cos(slope) * np.cos(az - aspect))
 
         hillshade = (shaded - shaded.min()) / (shaded.max() - shaded.min())
-           
 
         # Plot
         plt.figure(figsize=(10, 8))
@@ -341,7 +340,5 @@ class TopoCurve():
         plt.legend(handles=patches, loc="lower right", fontsize=8, frameon=True)
 
         plt.tight_layout()
-        plt.savefig(output, dpi=300)
+        plt.savefig(os.path.join(output_dir, 'smap.png'), dpi=300)
         plt.show()
-
-        print(f"Saved: {output}")
