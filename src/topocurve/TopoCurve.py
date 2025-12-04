@@ -270,7 +270,7 @@ class TopoCurve():
         print(f"Saved: {filename}")
 
 
-    def plot_smap(self, SMAP, tiff_file, title="SMAP Classification", output_dir="../../reports/figures/"):
+    def plot_smap(self, SMAP, tiff_file, title="Curvature Classification", output_dir="../../reports/figures/"):
         """
         Plot SMAP classification using your hillshade + curvature color rules,
         but without changing SMAP values themselves.
