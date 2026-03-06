@@ -31,8 +31,8 @@ class SpectralFiltering (TopoCurve):
         ZFilt (numpy.ndarray): Filtered elevation values.
         ZDiff (numpy.ndarray): Difference between original and filtered elevation values.
     """
-    def __init__(self, tiff_file):  # Define the constructor method for the class
-        super().__init__(tiff_file)
+    def __init__(self, tiff_file=None, z_array=None, x=None, y=None, dx=None, dy=None):
+        super().__init__(tiff_file=tiff_file, z_array=z_array, x=x, y=y, dx=dx, dy=dy)
 
     def detrend(self):  # Define a method to detrend elevation values
         """
@@ -46,7 +46,7 @@ class SpectralFiltering (TopoCurve):
         z_array = np.array(self.z_array)
 
         # Create meshgrid for coordinates
-        x, y = np.meshgrid(np.arange(z_array.shape[1]), np.arange(z_array.shape[0]))
+        x, y = np.meshgrid(self.x, self.y)
 
         # Flatten coordinates and elevation values
         x_flat = x.flatten()
@@ -85,8 +85,9 @@ class SpectralFiltering (TopoCurve):
         middle = np.concatenate((np.fliplr(detrend), detrend, np.fliplr(detrend)), axis=1)
         bottom = np.concatenate((np.rot90(detrend, 2), np.flipud(detrend), np.rot90(detrend, 2)), axis=1)
         mirrored_array = np.concatenate((top, middle, bottom), axis=0)  # Concatenate the mirrored parts
-        self.dimx_ma = len(mirrored_array)  # Store the dimensions of the mirrored array
-        self.dimy_ma = len(mirrored_array[0])
+
+        self.dimy_ma = mirrored_array.shape[0] # Store the dimensions of the mirrored array
+        self.dimx_ma = mirrored_array.shape[1]
         return mirrored_array  # Return the mirrored array
 
     def tukeyWindow(self, alphaIn):  # Define a method to apply a Tukey window
@@ -104,8 +105,8 @@ class SpectralFiltering (TopoCurve):
         data = taper((len(mirrored_array), len(mirrored_array[0])))  # Apply the Tukey window
         tukey_array = np.multiply(data, mirrored_array)  # Multiply the window with the elevation values
 
-        self.dim_x = self.z_array.shape[0]  # Store the dimensions of the original array
-        self.dim_y = self.z_array.shape[1]
+        self.dim_y = self.z_array.shape[0]  # Store the dimensions of the original array
+        self.dim_x = self.z_array.shape[1]
 
         return tukey_array  # Return the elevation values after applying the Tukey window
 
@@ -119,18 +120,21 @@ class SpectralFiltering (TopoCurve):
         Returns:
             padded_window_array (numpy.ndarray): Padded elevation values.
         """
+
         # Finds next power of two
         tukey_array = self.tukeyWindow(alphaIn)  # Apply Tukey window to elevation values
-        if self.dimx_ma > self.dimy_ma:  # Determine the size for padding
+        if self.dimx_ma > self.dimy_ma:
             a = int(math.log2(self.dimx_ma))
             if 2**a == self.dimx_ma:
                 self.powerOfTwo = self.dimx_ma
-            self.powerOfTwo = 2**(a+1)
+            else:
+                self.powerOfTwo = 2**(a + 1)
         else:
             a = int(math.log2(self.dimy_ma))
             if 2**a == self.dimy_ma:
                 self.powerOfTwo = self.dimy_ma
-            self.powerOfTwo = 2**(a+1)
+            else:
+                self.powerOfTwo = 2**(a + 1)
 
         # Finds difference in dimension of final array and power of two
         self.pad_x_max = math.ceil((self.powerOfTwo - self.dimx_ma) / 2)
@@ -139,7 +143,7 @@ class SpectralFiltering (TopoCurve):
         self.pad_y_min = math.floor((self.powerOfTwo - self.dimy_ma) / 2)
 
         # Pads array
-        padded_window_array = np.pad(tukey_array, ((self.pad_x_max, self.pad_x_min), (self.pad_y_max, self.pad_y_min)), 'constant', constant_values=(0, 0))
+        padded_window_array = np.pad(tukey_array,((self.pad_y_max, self.pad_y_min), (self.pad_x_max, self.pad_x_min)),'constant',constant_values=(0, 0))
         return padded_window_array  # Return the padded elevation values
 
     def FFT(self, filter, filterType, alphaIn):
@@ -158,11 +162,9 @@ class SpectralFiltering (TopoCurve):
         # Doing fft on the windowed and padded array
         fft_array = fftshift(fft2(padded_window_array))  # Compute 2-dimensional FFT of the padded array
 
-        self.dx = np.array(self.dx)  # Convert grid spacing to a NumPy array
-        self.powerOfTwo = np.array(self.powerOfTwo)  # Convert the power of two to a NumPy array
-        dkx = np.divide(1, (self.dx[0] * self.powerOfTwo))  # Compute the spacing in the frequency domain in x-direction
-        dky = np.divide(1, (self.dx[0] * self.powerOfTwo))  # Compute the spacing in the frequency domain in y-direction
-
+        dkx = 1.0 / (self.dx * self.powerOfTwo) # Compute the spacing in the frequency domain in x-direction
+        dky = 1.0 / (self.dy * self.powerOfTwo) # Compute the spacing in the frequency domain in y-direction
+       
         xc = self.powerOfTwo / 2 + 1  # Get the matrix indices of zero wavenumber in x-direction
         yc = self.powerOfTwo / 2 + 1  # Get the matrix indices of zero wavenumber in y-direction
 
@@ -197,8 +199,7 @@ class SpectralFiltering (TopoCurve):
 
         self.Filter = filter  # Store the filter parameter
         # Extract the filtered elevation values and add back the trend component
-        self.ZFilt = ZMWF[(self.pad_x_max + self.dim_x): -(self.pad_x_min + self.dim_x), 
-                        (self.pad_y_max + self.dim_y): -(self.pad_y_min + self.dim_y)] + self.plane
+        self.ZFilt = ZMWF[(self.pad_y_max + self.dim_y): -(self.pad_y_min + self.dim_y),(self.pad_x_max + self.dim_x): -(self.pad_x_min + self.dim_x)] + self.plane
         self.ZDiff = self.z_array - self.ZFilt  # Compute the difference between original and filtered elevation values
 
-        return self.dx[0], self.dx[1], self.ZFilt  # Return the filtered elevation values
+        return self.dx, self.dy, self.ZFilt  # Return the filtered elevation values

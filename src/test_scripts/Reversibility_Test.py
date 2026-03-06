@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from topocurve.SpectralFiltering import SpectralFiltering  # adjust import if your path differs
 
-# --- synthetic surface ---
+# synthetic surface 
 def generate_surface(size=128, scale=10.0):
     x = np.linspace(-np.pi, np.pi, size)
     y = np.linspace(-np.pi, np.pi, size)
@@ -17,14 +17,14 @@ def generate_surface(size=128, scale=10.0):
     dy = float(y[1] - y[0])
     return Z, dx, dy
 
-# --- frequency radius grid (unshifted FFT convention) ---
+# frequency radius grid (unshifted FFT convention) 
 def freq_radius_grid(ny, nx, dy, dx):
     ky = np.fft.fftfreq(ny, d=dy)
     kx = np.fft.fftfreq(nx, d=dx)
     KX, KY = np.meshgrid(kx, ky)
     return np.sqrt(KX**2 + KY**2)
 
-# --- low/high complementary pair using your class’ window/pad/crop (no class edits needed) ---
+# low/high complementary pair using your class’ window/pad/crop (no class edits needed) 
 def reconstruct_via_lp_plus_hp(sf, Z_in, dx, dy, cutoff_max, alpha):
     sf.z_array = Z_in
     sf.dx = [dx, dy]

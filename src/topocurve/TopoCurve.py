@@ -28,53 +28,126 @@ class TopoCurve():
         dx_dy (float): Grid spacing in both x and y directions.
     """
 
-    def __init__(self, tiff_file):
+    def __init__(self, tiff_file=None, z_array=None, x=None, y=None, dx=None, dy=None):
         """
-        Initializes the TopoCurve object.
+        Initializes the TopoCurve object from either:
+
+        1. A GeoTIFF file, or
+        2. A generic gridded surface.
 
         Args:
-            tiff_file (str): Path to the GeoTIFF file.
+            tiff_file (str, optional): Path to the GeoTIFF file.
+            z_array (numpy.ndarray, optional): 2D array of elevation values.
+            x (numpy.ndarray, optional): 1D x-coordinate vector of length nx.
+            y (numpy.ndarray, optional): 1D y-coordinate vector of length ny.
+            dx (float, optional): Grid spacing in x if x is not provided.
+            dy (float, optional): Grid spacing in y if y is not provided.
         """
-        tif = TiffFile(tiff_file)  # Open the GeoTIFF file
+        self.tiff_file = tiff_file
+        self.metadata = {}
 
-        # Ensure input file is of the right type and contains georeferencing information
-        if not tif.is_geotiff:
-            raise Exception("Not a GeoTIFF file.")
-        if not tif.geotiff_metadata:
-            raise Exception("Metadata missing.")
+        # Standard GeoTIFF input (existing behavior)
+        if tiff_file is not None:
+            tif = TiffFile(tiff_file)  # Open the GeoTIFF file
 
-        # Store projection information
-        self.metadata = {
-            'GeogAngularUnitsGeoKey': tif.geotiff_metadata["GeogAngularUnitsGeoKey"],
-            'GeogCitationGeoKey': tif.geotiff_metadata["GeogCitationGeoKey"],
-            'GTCitationGeoKey': tif.geotiff_metadata["GTCitationGeoKey"],
-            'GTModelTypeGeoKey': tif.geotiff_metadata["GTModelTypeGeoKey"],
-            'GTRasterTypeGeoKey': tif.geotiff_metadata["GTRasterTypeGeoKey"],
-            'KeyDirectoryVersion': tif.geotiff_metadata["KeyDirectoryVersion"],
-            'KeyRevision': tif.geotiff_metadata["KeyRevision"],
-            'KeyRevisionMinor': tif.geotiff_metadata["KeyRevisionMinor"],
-            'ModelPixelScale': tif.geotiff_metadata["ModelPixelScale"],
-            'ModelTiepoint': tif.geotiff_metadata["ModelTiepoint"],
-            'ProjectedCSTypeGeoKey': tif.geotiff_metadata["ProjectedCSTypeGeoKey"],
-            'ProjLinearUnitsGeoKey': tif.geotiff_metadata["ProjLinearUnitsGeoKey"],
-        }
+            # Ensure input file is of the right type and contains georeferencing information
+            if not tif.is_geotiff:
+                raise Exception("Not a GeoTIFF file.")
+            if not tif.geotiff_metadata:
+                raise Exception("Metadata missing.")
 
-        crs = tif.geotiff_metadata["ProjectedCSTypeGeoKey"].value  # Get the coordinate reference system (CRS)
+            # Store projection information
+            self.metadata = {
+                'GeogAngularUnitsGeoKey': tif.geotiff_metadata["GeogAngularUnitsGeoKey"],
+                'GeogCitationGeoKey': tif.geotiff_metadata["GeogCitationGeoKey"],
+                'GTCitationGeoKey': tif.geotiff_metadata["GTCitationGeoKey"],
+                'GTModelTypeGeoKey': tif.geotiff_metadata["GTModelTypeGeoKey"],
+                'GTRasterTypeGeoKey': tif.geotiff_metadata["GTRasterTypeGeoKey"],
+                'KeyDirectoryVersion': tif.geotiff_metadata["KeyDirectoryVersion"],
+                'KeyRevision': tif.geotiff_metadata["KeyRevision"],
+                'KeyRevisionMinor': tif.geotiff_metadata["KeyRevisionMinor"],
+                'ModelPixelScale': tif.geotiff_metadata["ModelPixelScale"],
+                'ModelTiepoint': tif.geotiff_metadata["ModelTiepoint"],
+                'ProjectedCSTypeGeoKey': tif.geotiff_metadata["ProjectedCSTypeGeoKey"],
+                'ProjLinearUnitsGeoKey': tif.geotiff_metadata["ProjLinearUnitsGeoKey"],
+            }
 
-        # Pull out array of elevation values and store it as array within the DEM class
-        gtiff = GeoTiff(tiff_file, crs_code=crs)
-        self.z_array = gtiff.read()
+            crs = tif.geotiff_metadata["ProjectedCSTypeGeoKey"].value  # Get the CRS
 
-        # Pull out dimensions of DEM grid
-        self.dimx, self.dimy = gtiff.tif_shape
+            # Pull out array of elevation values and store it
+            gtiff = GeoTiff(tiff_file, crs_code=crs)
+            self.z_array = gtiff.read()
+            
 
-        # Assign grid spacing and check to ensure grid spacing is uniform in x and y directions
-        self.dx = tif.geotiff_metadata["ModelPixelScale"]
-        if abs(self.dx[1] - self.dx[0]) < 1e-3:
-            self.dx_dy = self.dx[0]
+            # Pull out dimensions of DEM grid
+            self.dimy, self.dimx = self.z_array.shape
+
+            # Assign grid spacing and check to ensure grid spacing is uniform in x and y directions
+            self.dx = tif.geotiff_metadata["ModelPixelScale"]
+            if abs(self.dx[1] - self.dx[0]) < 1e-3:
+                self.dx_dy = self.dx[0]
+            else:
+                raise Exception("WARNING: Grid spacing is not uniform in x and y directions!")
+
+            # Keep separate dx and dy values available
+            self.dx = float(self.dx[0])
+            self.dy = float(tif.geotiff_metadata["ModelPixelScale"][1])
+
+            # Build simple x/y vectors for generic plotting fallback
+            self.x = np.arange(self.dimx) * self.dx
+            self.y = np.arange(self.dimy) * self.dy
+
+        # Generic gridded surface input
+        elif z_array is not None:
+            self.z_array = np.asarray(z_array, dtype=float)
+
+            if self.z_array.ndim != 2:
+                raise ValueError("z_array must be a 2D array with shape (ny, nx).")
+
+            self.dimy, self.dimx = self.z_array.shape
+
+            # x coordinates
+            if x is not None:
+                self.x = np.asarray(x)
+                if self.x.ndim != 1 or len(self.x) != self.dimx:
+                    raise ValueError("x must be a 1D vector with length equal to the number of columns in z_array.")
+                if len(self.x) > 1:
+                    self.dx = float(np.mean(np.diff(self.x)))
+                else:
+                    self.dx = None
+            else:
+                if dx is None:
+                    raise ValueError("Provide either x or dx for generic gridded input.")
+                self.dx = float(dx)
+                self.x = np.arange(self.dimx) * self.dx
+
+            # y coordinates
+            if y is not None:
+                self.y = np.asarray(y)
+                if self.y.ndim != 1 or len(self.y) != self.dimy:
+                    raise ValueError("y must be a 1D vector with length equal to the number of rows in z_array.")
+                if len(self.y) > 1:
+                    self.dy = float(np.mean(np.diff(self.y)))
+                else:
+                    self.dy = None
+            else:
+                if dy is None:
+                    dy = dx
+                if dy is None:
+                    raise ValueError("Provide either y or dy for generic gridded input.")
+                self.dy = float(dy)
+                self.y = np.arange(self.dimy) * self.dy
+
+            if self.dx is not None and self.dy is not None and abs(self.dx - self.dy) < 1e-3:
+                self.dx_dy = self.dx
+            else:
+                self.dx_dy = None
+
+            self.metadata = {"input_type": "generic_grid"}
+
         else:
-            raise Exception("WARNING: Grid spacing is not uniform in x and y directions!")
-
+            raise ValueError("Provide either tiff_file or z_array.")
+        
     def CurveCalc(self, ZFilt, dx, dy, kt):
         """
         Calculates principal, mean, and Gaussian curvature maps for a surface Z(x,y).
@@ -208,13 +281,23 @@ class TopoCurve():
 
         return K1, K2, KM, KG, SMAP, SDist, CMAP
 
-    
-    def get_latlon_extent(self, tiff_path):
+    def get_extent(self):
+        """
+        Returns native x/y extent for generic gridded inputs or fallback plotting.
+        """
+        return [self.x[0], self.x[-1], self.y[-1], self.y[0]]
+
+    def get_latlon_extent(self, tiff_path=None):
         """
         Extracts geographic extent (lon/lat bounding box) from a DEM GeoTIFF.
         Returns:
             [lon_min, lon_max, lat_min, lat_max]
         """
+        if tiff_path is None:
+            tiff_path = self.tiff_file
+
+        if tiff_path is None:
+            raise ValueError("No GeoTIFF file available for lat/lon extent.")
 
         # Open the GeoTIFF
         with rasterio.open(tiff_path) as src:
@@ -237,28 +320,34 @@ class TopoCurve():
         lon_max, lat_min = tf.transform(X2, Y2)   # lower-right
 
         return [lon_min, lon_max, lat_min, lat_max]
-
-    
-    def plot(self, array, title, cmap, cbar_label, filename, tiff_file,
-             output_dir="../../reports/figures/"):
+ 
+    def plot(self, array, title, cmap, cbar_label, filename, tiff_file=None,
+         output_dir="../../reports/figures/"):
         """
         Generic plotting function for DEM, filtered DEM, curvature fields, etc.
         """
-
         os.makedirs(output_dir, exist_ok=True)
 
-        # Get geographic extent
-        extent = self.get_latlon_extent(tiff_file)
+        if tiff_file is None:
+            tiff_file = self.tiff_file
+
+        if tiff_file is not None:
+            extent = self.get_latlon_extent(tiff_file)
+            xlabel = "Longitude (°W)"
+            ylabel = "Latitude (°N)"
+        else:
+            extent = self.get_extent()
+            xlabel = "X"
+            ylabel = "Y"
 
         plt.figure(figsize=(10, 6))
         plt.imshow(array, cmap=cmap, extent=extent, origin='upper')
         plt.colorbar(label=cbar_label)
 
         plt.title(title)
-        plt.xlabel("Longitude (°W)")
-        plt.ylabel("Latitude (°N)")
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
 
-        # Tick formatting
         ax = plt.gca()
         ax.xaxis.set_major_formatter(mticker.FormatStrFormatter('%.5f'))
         ax.yaxis.set_major_formatter(mticker.FormatStrFormatter('%.5f'))
@@ -269,63 +358,69 @@ class TopoCurve():
 
         print(f"Saved: {filename}")
 
-
-    def plot_smap(self, SMAP, tiff_file, title="Curvature Classification", output_dir="../../reports/figures/"):
+    def plot_smap(self, SMAP, tiff_file=None, title="Curvature Classification", output_dir="../../reports/figures/"):
         """
         Plot SMAP classification using your hillshade + curvature color rules,
         but without changing SMAP values themselves.
         """
+        os.makedirs(output_dir, exist_ok=True)
 
-        extent = self.get_latlon_extent(tiff_file)
+        if tiff_file is None:
+            tiff_file = self.tiff_file
 
-        # Colors mapped to SMAP values
+        if tiff_file is not None:
+            extent = self.get_latlon_extent(tiff_file)
+            xlabel = "Longitude (°W)"
+            ylabel = "Latitude (°N)"
+        else:
+            extent = self.get_extent()
+            xlabel = "X"
+            ylabel = "Y"
+
         color_list = {
-            -3: (0.33, 0.00, 0.00, 1.0),   # Dome (deep maroon)
-            -2: (0.95, 0.28, 0.26, 1.0),   # Antiformal Saddle (bright red)
-            -1: (0.80, 0.20, 0.15, 1.0),   # Antiform (rust red)
-            0: (1.00, 1.00, 1.00, 1.0),   # Plane (white)
-            1: (0.55, 0.85, 0.90, 1.0),   # Synform (mid cyan)
-            2: (0.78, 0.95, 0.98, 1.0),   # Synformal Saddle (cyan)
-            3: (0.11, 0.30, 0.95, 1.0)    # Basin (deep blue)
+            -3: (0.33, 0.00, 0.00, 1.0),
+            -2: (0.95, 0.28, 0.26, 1.0),
+            -1: (0.80, 0.20, 0.15, 1.0),
+            0: (1.00, 1.00, 1.00, 1.0),
+            1: (0.55, 0.85, 0.90, 1.0),
+            2: (0.78, 0.95, 0.98, 1.0),
+            3: (0.11, 0.30, 0.95, 1.0)
         }
 
-        # Build colormap and norm
-        keys = sorted(color_list.keys())  # [-3,-2,-1,0,1,2,3]
+        keys = sorted(color_list.keys())
         colors = [color_list[k] for k in keys]
 
         cmap = ListedColormap(colors)
         bounds = [-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5]
         norm = BoundaryNorm(bounds, cmap.N)
 
-        # Compute hillshade for base layer
         Z = self.z_array
-        azimuth=315 
-        altitude=45
+        azimuth = 315
+        altitude = 45
         az = np.deg2rad(azimuth)
         alt = np.deg2rad(altitude)
 
-        dy, dx = np.gradient(Z)
-        slope = np.pi/2 - np.arctan(np.sqrt(dx*dx + dy*dy))
-        aspect = np.arctan2(-dx, dy)
+        dZdy, dZdx = np.gradient(Z, self.dy, self.dx)
+        slope = np.pi / 2 - np.arctan(np.sqrt(dZdx * dZdx + dZdy * dZdy))
+        aspect = np.arctan2(-dZdx, dZdy)
 
-        shaded = (np.sin(alt) * np.sin(slope) + np.cos(alt) * np.cos(slope) * np.cos(az - aspect))
+        shaded = (np.sin(alt) * np.sin(slope) +
+                np.cos(alt) * np.cos(slope) * np.cos(az - aspect))
 
         hillshade = (shaded - shaded.min()) / (shaded.max() - shaded.min())
 
-        # Plot
         plt.figure(figsize=(10, 8))
         plt.imshow(hillshade, cmap="gray", extent=extent, origin="upper")
         plt.imshow(SMAP, cmap=cmap, norm=norm, alpha=0.55, extent=extent, origin="upper")
 
         plt.title(title)
-        plt.xlabel("Longitude (°W)")
-        plt.ylabel("Latitude (°N)")
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
 
         ax = plt.gca()
         ax.xaxis.set_major_formatter(mticker.FormatStrFormatter('%.4f'))
         ax.yaxis.set_major_formatter(mticker.FormatStrFormatter('%.4f'))
 
-        # Legend
         labels = [
             "Dome (KG>0, KM<0)",
             "Antiformal Saddle (KG<0, KM<0)",

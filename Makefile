@@ -1,9 +1,6 @@
 .PHONY: clean data lint requirements sync_data_to_s3 sync_data_from_s3
 
-#################################################################################
-# GLOBALS                                                                       #
-#################################################################################
-
+# GLOBALS                                                                       
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
@@ -16,10 +13,7 @@ else
 HAS_CONDA=True
 endif
 
-#################################################################################
-# COMMANDS                                                                      #
-#################################################################################
-
+# COMMANDS                                                                      
 ## Install Python Dependencies
 requirements: test_environment
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
@@ -76,16 +70,7 @@ endif
 test_environment:
 	$(PYTHON_INTERPRETER) test_environment.py
 
-#################################################################################
-# PROJECT RULES                                                                 #
-#################################################################################
-
-
-
-#################################################################################
 # Self Documenting Commands                                                     #
-#################################################################################
-
 .DEFAULT_GOAL := help
 
 # Inspired by <http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html>
