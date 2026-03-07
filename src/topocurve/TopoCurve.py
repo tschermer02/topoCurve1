@@ -231,19 +231,19 @@ class TopoCurve():
 
         # Peaks: KG > 0, KM < 0
         in_ = np.where((KG > tol) & (KM < -tol))
-        SMAP[in_] = -3
+        SMAP[in_] = 3
         SDist[0][1] = ['Peaks']
         SDist[1][1] = np.size(in_) / np.size(SMAP)
 
         # Antiformal Saddles: KG < 0, KM < 0
         in_ = np.where((KG < -tol) & (KM < -tol))
-        SMAP[in_] = -2
+        SMAP[in_] = 2
         SDist[0][2] = ['Antiformal Saddles']
         SDist[1][2] = np.size(in_) / np.size(SMAP)
 
         # Antiforms: KG ≈ 0, KM < 0
         in_ = np.where((np.abs(KG) <= tol) & (KM < -tol))
-        SMAP[in_] = -1
+        SMAP[in_] = 1
         SDist[0][3] = ['Antiforms']
         SDist[1][3] = np.size(in_) / np.size(SMAP)
 
@@ -255,19 +255,19 @@ class TopoCurve():
 
         # Synforms: KG ≈ 0, KM > 0
         in_ = np.where((np.abs(KG) <= tol) & (KM > tol))
-        SMAP[in_] = 1
+        SMAP[in_] = -1
         SDist[0][5] = ['Synforms']
         SDist[1][5] = np.size(in_) / np.size(SMAP)
 
         # Synformal Saddles: KG < 0, KM > 0
         in_ = np.where((KG < -tol) & (KM > tol))
-        SMAP[in_] = 2
+        SMAP[in_] = -2
         SDist[0][6] = ['Synformal Saddles']
         SDist[1][6] = np.size(in_) / np.size(SMAP)
 
         # Basins: KG > 0, KM > 0
         in_ = np.where((KG > tol) & (KM > tol))
-        SMAP[in_] = 3
+        SMAP[in_] = -3
         SDist[0][7] = ['Basins']
         SDist[1][7] = np.size(in_) / np.size(SMAP)
 
