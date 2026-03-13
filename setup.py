@@ -2,14 +2,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='topocurve',
-    version='0.1.5',
+    version='0.1.6',
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     install_requires=[
         'numpy<2',
         'scipy',
         'zarr>=2.12,<2.13',
-        'numcodecs>=0.10,<0.12',
+        'numcodecs>=0.13.1,<0.16',
         'Pillow',
         'photutils>=1.8,<2.0',
         'tifffile<2024.8',
