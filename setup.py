@@ -2,19 +2,19 @@ from setuptools import setup, find_packages
 
 setup(
     name='topocurve',
-    version='0.1.4',
+    version='0.1.5',
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     install_requires=[
         'numpy<2',
         'scipy',
-        'zarr<2.13',
-        'numcodecs>0.12',
+        'zarr>=2.12,<2.13',
+        'numcodecs>=0.10,<0.12',
         'Pillow',
         'photutils>=1.8,<2.0',
         'tifffile<2024.8',
-        'geotiff', 
-        'scikit-learn', 
+        'geotiff',
+        'scikit-learn',
         'rasterio',
         'pyproj',
         'matplotlib'
