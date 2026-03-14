@@ -229,20 +229,20 @@ class TopoCurve():
         SDist[0][0] = ['Perfect Saddles']
         SDist[1][0] = np.size(in_) / np.size(SMAP)
 
-        # Peaks: KG > 0, KM < 0
-        in_ = np.where((KG > tol) & (KM < -tol))
+        # Peaks: KG > 0, KM > 0
+        in_ = np.where((KG > tol) & (KM > tol))
         SMAP[in_] = 3
         SDist[0][1] = ['Peaks']
         SDist[1][1] = np.size(in_) / np.size(SMAP)
 
-        # Antiformal Saddles: KG < 0, KM < 0
-        in_ = np.where((KG < -tol) & (KM < -tol))
+        # Antiformal Saddles: KG < 0, KM > 0
+        in_ = np.where((KG < -tol) & (KM > tol))
         SMAP[in_] = 2
         SDist[0][2] = ['Antiformal Saddles']
         SDist[1][2] = np.size(in_) / np.size(SMAP)
 
-        # Antiforms: KG ≈ 0, KM < 0
-        in_ = np.where((np.abs(KG) <= tol) & (KM < -tol))
+        # Antiforms: KG ≈ 0, KM > 0
+        in_ = np.where((np.abs(KG) <= tol) & (KM > tol))
         SMAP[in_] = 1
         SDist[0][3] = ['Antiforms']
         SDist[1][3] = np.size(in_) / np.size(SMAP)
@@ -253,20 +253,20 @@ class TopoCurve():
         SDist[0][4] = ['Planes']
         SDist[1][4] = np.size(in_) / np.size(SMAP)
 
-        # Synforms: KG ≈ 0, KM > 0
-        in_ = np.where((np.abs(KG) <= tol) & (KM > tol))
+        # Synforms: KG ≈ 0, KM < 0
+        in_ = np.where((np.abs(KG) <= tol) & (KM < -tol))
         SMAP[in_] = -1
         SDist[0][5] = ['Synforms']
         SDist[1][5] = np.size(in_) / np.size(SMAP)
 
-        # Synformal Saddles: KG < 0, KM > 0
-        in_ = np.where((KG < -tol) & (KM > tol))
+        # Synformal Saddles: KG < 0, KM < 0
+        in_ = np.where((KG < -tol) & (KM < -tol))
         SMAP[in_] = -2
         SDist[0][6] = ['Synformal Saddles']
         SDist[1][6] = np.size(in_) / np.size(SMAP)
 
-        # Basins: KG > 0, KM > 0
-        in_ = np.where((KG > tol) & (KM > tol))
+        # Basins: KG > 0, KM < 0
+        in_ = np.where((KG > tol) & (KM < -tol))
         SMAP[in_] = -3
         SDist[0][7] = ['Basins']
         SDist[1][7] = np.size(in_) / np.size(SMAP)
@@ -378,13 +378,13 @@ class TopoCurve():
             ylabel = "Y"
 
         color_list = {
-            -3: (0.33, 0.00, 0.00, 1.0),
-            -2: (0.95, 0.28, 0.26, 1.0),
-            -1: (0.80, 0.20, 0.15, 1.0),
+            -3: (0.11, 0.30, 0.95, 1.0),
+            -2: (0.78, 0.95, 0.98, 1.0),
+            -1: (0.55, 0.85, 0.90, 1.0),
             0: (1.00, 1.00, 1.00, 1.0),
-            1: (0.55, 0.85, 0.90, 1.0),
-            2: (0.78, 0.95, 0.98, 1.0),
-            3: (0.11, 0.30, 0.95, 1.0)
+            1: (0.80, 0.20, 0.15, 1.0),
+            2: (0.95, 0.28, 0.26, 1.0),
+            3: (0.33, 0.00, 0.00, 1.0)
         }
 
         keys = sorted(color_list.keys())
@@ -422,13 +422,13 @@ class TopoCurve():
         ax.yaxis.set_major_formatter(mticker.FormatStrFormatter('%.4f'))
 
         labels = [
-            "Dome (KG>0, KM<0)",
-            "Antiformal Saddle (KG<0, KM<0)",
-            "Antiform (KG≈0, KM<0)",
-            "Plane (KG≈0, KM≈0)",
-            "Synform (KG≈0, KM>0)",
+            "Basin (KG>0, KM>0)",
             "Synformal Saddle (KG<0, KM>0)",
-            "Basin (KG>0, KM>0)"
+            "Synform (KG≈0, KM>0)",
+            "Plane (KG≈0, KM≈0)",
+            "Antiform (KG≈0, KM<0)",
+            "Antiformal Saddle (KG<0, KM<0)",
+            "Dome (KG>0, KM<0)"
         ]
 
         patches = [Patch(color=colors[i], label=labels[i]) for i in range(7)]
