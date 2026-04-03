@@ -183,6 +183,11 @@ class TopoCurve():
         CUV = np.cross(SU, SV, axis=2)
         AC = np.linalg.norm(CUV, axis=2)
         NX, NY, NZ = (CUV[..., 0] / AC, CUV[..., 1] / AC, CUV[..., 2] / AC)
+        
+        # Calculate tangent slope from unit normal
+        Sl=np.tan(np.arccos(NZ))
+        
+        
 
         # Compute derivatives of the normal vector
         NXV, NXU = np.gradient(NX, dy, dx)
@@ -278,8 +283,10 @@ class TopoCurve():
             'K1': K1,
             'K2': K2,
         }
+        
+        
 
-        return K1, K2, KM, KG, SMAP, SDist, CMAP
+        return K1, K2, KM, KG, SMAP, SDist, CMAP, Sl
 
     def get_extent(self):
         """

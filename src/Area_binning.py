@@ -7,6 +7,8 @@ Created on Tue Nov 11 11:39:24 2025
 """
 
 from topocurve import TopoCurve,SpectralFiltering
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 # import matplotlib.colors as colors
@@ -70,6 +72,7 @@ inflated_dem = grid.resolve_flats(flooded_dem)
 # Route flow (use 'routing' field to adjust flow routing algorithm)
 fdir = grid.flowdir(inflated_dem,routing='dinf')
 acc = grid.accumulation(fdir,routing='dinf')*grid.affine._scaling[0]**2
+eps=1e-30
 LogA=np.log10(acc) # Log transform drainage area data
 
 # fig, ax = plt.subplots(figsize=(8,6))
@@ -112,6 +115,7 @@ km=np.zeros([nb-1])
 kg=np.zeros([nb-1])
 k1=np.zeros([nb-1])
 k2=np.zeros([nb-1])
+sl=np.zeros([nb-1])
 a_pdf=np.zeros([nb-1])
 p_b=np.zeros([nb-1])
 p_d=np.zeros([nb-1])
@@ -128,6 +132,7 @@ for i in np.arange(nb-1):
     kg[i]=np.mean(K[6]['KG'][ind])
     k1[i]=np.mean(K[6]['K1'][ind])
     k2[i]=np.mean(K[6]['K2'][ind])
+    sl[i]=np.mean(K[7][ind])
     
     S=K[4][ind]
     p_b[i]=np.size(np.where(S==-3))/np.size(S)
@@ -146,6 +151,8 @@ p_b = np.convolve(p_b, np.ones(sm_win) / sm_win, mode='same')
 p_d = np.convolve(p_d, np.ones(sm_win) / sm_win, mode='same')
 p_as = np.convolve(p_as, np.ones(sm_win) / sm_win, mode='same')
 p_ss = np.convolve(p_ss, np.ones(sm_win) / sm_win, mode='same')
+sl = np.convolve(sl, np.ones(sm_win) / sm_win, mode='same')
+
 
 
 #% Shape Class conditional pdfs
@@ -162,17 +169,24 @@ ax.set_ylabel('P(C|A)',fontsize=14)
 ax.set_xlim(1e2,1e7)
 
 
-#%% Upstream area distribution/slope plot
+#% Upstream area distribution/slope plot
 
-fig, ax = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(6.5, 4))
 
-ax.fill_between(10**a, a_pdf, color= "b", alpha= 0.8)
+ax.fill_between(10**a, a_pdf*100, color= "b", alpha= 0.8)
+ax.plot(10**a, a_pdf*100, color= "k")
 ax.set_xscale('log')
-ax.set_xlabel('Drainage Area')
+ax.set_xlabel('Upstream Drainage Area (m$^2$)')
 ax.set_xlim(10**2,10**7)
-ax.set_ylim(0,0.07)
+ax.set_ylim(0,7)
+ax.set_ylabel('Area PDF (%)')
 
-#%%
+ax2 = ax.twinx() 
+ax2.plot(10**a,sl,color='k',linestyle='--',linewidth=2)
+ax2.set_ylim(0,0.7)
+ax2.set_ylabel('Slope (m/m)')
+
+#%
 fig, ax = plt.subplots(figsize=(6.5, 4))
 
 ax.plot(10**a,kg,color=[0.2, 0.4, 0],linewidth=2)
@@ -193,16 +207,16 @@ ax.set_ylim(-1.5e-5,1.5e-5)
 
 #%%
 from matplotlib.colors import ListedColormap, BoundaryNorm
-from matplotlib.patches import Patch
+
 
 color_list = {
-    -3: (0.11, 0.30, 0.95, 1.0),
-    -2: (0.78, 0.95, 0.98, 1.0),
+    -3: (0, 0, 1, 1.0),
+    -2: (0, 0.8, 1, 1.0),
     -1: (0.55, 0.85, 0.90, 1.0),
     0: (1.00, 1.00, 1.00, 1.0),
     1: (0.80, 0.20, 0.15, 1.0),
-    2: (0.95, 0.28, 0.26, 1.0),
-    3: (0.33, 0.00, 0.00, 1.0)
+    2: (1, 0, 0, 1.0),
+    3: (0.4, 0.00, 0.00, 1.0)
 }
 
 lon_lim=[-123.99, -123.91]
@@ -222,7 +236,7 @@ extent=[E[np.min(in_c)],E[np.max(in_c)],N[np.min(in_r)],N[np.max(in_r)]]
 
 
 
-#%%
+#%
 keys = sorted(color_list.keys())
 colors = [color_list[k] for k in keys]
 
@@ -245,14 +259,6 @@ shaded = (np.sin(alt) * np.sin(slope) +
 
 hillshade = (shaded - shaded.min()) / (shaded.max() - shaded.min())
 
-plt.figure(figsize=(8, 8))
-plt.imshow(hillshade, cmap="gray",extent=dem.get_extent(),origin="lower")
-plt.imshow(K[4],cmap=cmap,norm=norm, alpha=0.6, extent=dem.get_extent(),origin="lower")
-plt.xlim(E[np.min(in_c)],E[np.max(in_c)])
-plt.ylim(N[np.min(in_r)],N[np.max(in_r)])
-
-#%%
-
 
 in_=np.where(BS==1)
 S=K[4][in_]
@@ -262,24 +268,41 @@ nss=np.size(np.where(S==-2))/np.size(S)*100
 nas=np.size(np.where(S==2))/np.size(S)*100
 ns=np.size(np.where(S==-1))/np.size(S)*100
 na=np.size(np.where(S==1))/np.size(S)*100
-np=np.size(np.where(S==0))/np.size(S)*100
+npl=np.size(np.where(S==0))/np.size(S)*100
 
 
 
-color_list = {
-    'a': (0, 0, 1, 1.0),
-    'b': (0.4, 0.00, 0.00, 1.0),
-    'c': (1, 0, 0, 1.0),
-    'd': (0, 1, 1, 1.0)
-      
-}
 keys = sorted(color_list.keys())
-colors = [color_list[k] for k in keys]
-plt.pie([nb,nd,nas,nss],colors=colors,startangle=5,
+colors = [color_list[k] for k in [-3,3,2,-2]]
+
+fig,ax1=plt.subplots(figsize=(8, 8))
+ax1.imshow(hillshade, cmap="gray",extent=dem.get_extent(),origin="lower")
+ax1.imshow(K[4],cmap=cmap,norm=norm, alpha=0.5, extent=dem.get_extent(),origin="lower")
+ax1.set_xlim(E[np.min(in_c)],E[np.max(in_c)])
+ax1.set_ylim(N[np.min(in_r)],N[np.max(in_r)])
+
+axb=ax2 = fig.add_axes([0.63, 0.625, 0.26, 0.2])
+axb.set_xticklabels([])
+axb.set_xticks([])
+axb.set_yticks([])
+axb.set_yticklabels([])
+
+ax2 = fig.add_axes([0.66, 0.625, 0.2, 0.2])
+
+ax2.set_facecolor('white')
+
+# Issue with color order in pie chart
+ax2.pie([nb,nd,nas,nss],colors=colors,startangle=10,
         labels=(r'$'+str(np.round(nb,1))+'\%$',
                 r'$'+str(np.round(nd,1))+'\%$',
                 r'$'+str(np.round(nas,1))+'\%$',
                 r'$'+str(np.round(nss,1))+'\%$',))
+
+#%%
+
+
+
+
 
 
 
@@ -287,3 +310,7 @@ plt.pie([nb,nd,nas,nss],colors=colors,startangle=5,
 # Example usage:
 
 
+#%%
+
+# im = plt.imshow(K[7],vmin=0, vmax=1,cmap='viridis')
+# plt.colorbar(im)
