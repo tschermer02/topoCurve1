@@ -280,7 +280,43 @@ ax1.imshow(hillshade, cmap="gray",extent=dem.get_extent(),origin="lower")
 ax1.imshow(K[4],cmap=cmap,norm=norm, alpha=0.5, extent=dem.get_extent(),origin="lower")
 ax1.set_xlim(E[np.min(in_c)],E[np.max(in_c)])
 ax1.set_ylim(N[np.min(in_r)],N[np.max(in_r)])
+ax1.set_xticks([])
+ax1.set_xticklabels([])
 
+
+
+n = len(colors)
+width = 1.0 / n
+
+ax_bar = fig.add_axes([0.125, 0.85, 0.775, 0.04])
+ax_bar.set_axis_off()
+import matplotlib.patches as patches
+labels = ["Basins", "Domes", "Antiformal Saddles", "Synformal Saddles"]
+
+for i, (color, label) in enumerate(zip(colors, labels)):
+    # Filled block
+    ax_bar.add_patch(patches.Rectangle(
+        (i * width, 0), width, 1,
+        color=color, transform=ax_bar.transData, clip_on=False
+    ))
+    # Border drawn separately on top
+    ax_bar.add_patch(patches.FancyBboxPatch(
+        (i * width, 0), width, 1,
+        boxstyle="square,pad=0",
+        fill=False,
+        edgecolor="k",
+        linewidth=2,
+        transform=ax_bar.transData,
+        clip_on=False
+    ))
+    # Label centered in each block
+    ax_bar.text(
+        (i + 0.5) * width, 0.5, label,
+        ha="center", va="center",
+        fontsize=9, fontweight="bold", color="white",
+        transform=ax_bar.transData, clip_on=False
+    )
+    
 axb=ax2 = fig.add_axes([0.63, 0.625, 0.26, 0.2])
 axb.set_xticklabels([])
 axb.set_xticks([])
