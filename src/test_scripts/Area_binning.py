@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 11 11:39:24 2025
+Nate Klema - 4/7/26
 
-@author: ntklema
+This script bins topographic curvature metrics by upstream drainage area and 
+recreates figure panels from the Klema et al., 2025.  
+
+Inputs: 
+    DEM raster
+    Polygon shapefile with region of interest
 """
 
 from topocurve import TopoCurve,SpectralFiltering
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 # import matplotlib.colors as colors
 import geopandas as gpd
 import rasterio
 from rasterio.features import rasterize
+from pysheds.grid import Grid
+from matplotlib.colors import ListedColormap, BoundaryNorm
 
 # -------------- User inputs for generating TopoCurve object ------------
 
@@ -25,7 +30,8 @@ tiff_file = '/Users/ntklema/Library/CloudStorage/OneDrive-FortLewisCollege/Resea
 mask_path='/Users/ntklema/Library/CloudStorage/OneDrive-FortLewisCollege/Research_Projects/Curvature/ESurf_Paper/Data/Umpqua_10m_2_Basins.shp'
 mask = gpd.read_file(mask_path)
 
-#------------- Filter DEM and calculate curvatures------------------
+#Filter DEM and calculate curvatures
+
 # Instantiate TopoCurve object
 dem = TopoCurve(tiff_file=tiff_file)
 
@@ -39,7 +45,8 @@ dx, dy, filtered_elevation = spectral_filter.FFT(filter, 'lowpass', 0)
 # Compute curvature attributes
 K = dem.CurveCalc(filtered_elevation, dx, dy, 0)
 
-# ----------- Rasterize shapefile with ROI polygon -----------------
+# Rasterize shapefile with ROI polygon
+
 # Open the DEM to use its properties as a template
 with rasterio.open(tiff_file) as dem_src:
     dem_transform = dem_src.transform
@@ -57,7 +64,6 @@ BS = rasterize(
     dtype=rasterio.uint8 # Data type for the output raster
 )
 #%% ---------- Route Flow to generate upstream area grid -----------
-from pysheds.grid import Grid
 
 # Read raw DEM
 grid = Grid.from_raster(tiff_file)
@@ -75,41 +81,18 @@ acc = grid.accumulation(fdir,routing='dinf')*grid.affine._scaling[0]**2
 eps=1e-30
 LogA=np.log10(acc) # Log transform drainage area data
 
-# fig, ax = plt.subplots(figsize=(8,6))
-# fig.patch.set_alpha(0)
-# plt.grid('on', zorder=0)
-# im = ax.imshow(acc, extent=grid.extent, zorder=2,
-#                cmap='cubehelix',
-#                norm=colors.LogNorm(1, acc.max()),
-#                interpolation='bilinear')
-# plt.colorbar(im, ax=ax, label='Upstream Area')
-# plt.title('Flow Accumulation', size=14)
-# plt.xlabel('Longitude')
-# plt.ylabel('Latitude')
-# plt.tight_layout()
+#%% -------- Bin topography metrics by upstream area -----------
 
+nb = 100 # number of area bins
 
-color_list = {
-    'B': (0.11, 0.30, 0.95, 1.0),
-    'SS': (0.78, 0.95, 0.98, 1.0),
-    'S': (0.55, 0.85, 0.90, 1.0),
-    'P': (1.00, 1.00, 1.00, 1.0),
-    'A': (0.80, 0.20, 0.15, 1.0),
-    'AS': (0.95, 0.28, 0.26, 1.0),
-    'D': (0.33, 0.00, 0.00, 1.0)
-}
-
-
-#%%
-
-nb = 100
-mn_log_A =1.9
+# Define log(area) range for binning algorithm
+mn_log_A =1.9 
 max_log_A=7.3
 
-
+# Generate log10(area) vector
 av=np.linspace(mn_log_A,max_log_A,nb)
 
-
+# Create empty arrays corresponding to geometry metrics
 a=np.zeros([nb-1])
 km=np.zeros([nb-1])
 kg=np.zeros([nb-1])
@@ -122,8 +105,7 @@ p_d=np.zeros([nb-1])
 p_as=np.zeros([nb-1])
 p_ss=np.zeros([nb-1])
 
-
-
+# Bin metrics by area
 for i in np.arange(nb-1):
     ind=np.where((LogA >= av[i]) & (LogA < av[i+1]) & (BS!=0))
     a[i]=(av[i]+av[i+1])/2
@@ -140,8 +122,9 @@ for i in np.arange(nb-1):
     p_ss[i]=np.size(np.where(S==-2))/np.size(S)
     p_as[i]=np.size(np.where(S==2))/np.size(S)
 
+# smooth data
+sm_win=3 # smoothing window size for moving average
 
-sm_win=3
 a_pdf = np.convolve(a_pdf, np.ones(sm_win) / sm_win, mode='same')
 km = np.convolve(km, np.ones(sm_win) / sm_win, mode='same')
 kg = np.convolve(kg, np.ones(sm_win) / sm_win, mode='same')
@@ -153,14 +136,25 @@ p_as = np.convolve(p_as, np.ones(sm_win) / sm_win, mode='same')
 p_ss = np.convolve(p_ss, np.ones(sm_win) / sm_win, mode='same')
 sl = np.convolve(sl, np.ones(sm_win) / sm_win, mode='same')
 
+#%% ---------  Generate plot of conditional pdfs for shape classes -------
 
+# Define colormap
+color_list = {
+    '-3': (0.11, 0.30, 0.95, 1.0),
+    '-2': (0.78, 0.95, 0.98, 1.0),
+    '-1': (0.55, 0.85, 0.90, 1.0),
+    '0': (1.00, 1.00, 1.00, 1.0),
+    '1': (0.80, 0.20, 0.15, 1.0),
+    '2': (0.95, 0.28, 0.26, 1.0),
+    '3': (0.33, 0.00, 0.00, 1.0)
+}
 
 #% Shape Class conditional pdfs
 fig, ax = plt.subplots(figsize=(6, 4))
-ax.plot(10**a,p_b,color=color_list['B'],linewidth=2,label='Basins') 
-ax.plot(10**a,p_d,color=color_list['D'],linewidth=2,label='Domes')
-ax.plot(10**a,p_as,color=color_list['AS'],linewidth=2,label='Antiformal saddles')  
-ax.plot(10**a,p_ss,color=color_list['SS'],linewidth=2,label='Synformal saddles')
+ax.plot(10**a,p_b,color=color_list['-3'],linewidth=2,label='Basins') 
+ax.plot(10**a,p_d,color=color_list['3'],linewidth=2,label='Domes')
+ax.plot(10**a,p_as,color=color_list['2'],linewidth=2,label='Antiformal saddles')  
+ax.plot(10**a,p_ss,color=color_list['-2'],linewidth=2,label='Synformal saddles')
 ax.legend(bbox_to_anchor=(0.55, 0.5), loc='upper left')   
 ax.set_xscale('log')   
 ax.set_xlabel('Upstream Drainage Area ($m^2$)',fontsize=14)
@@ -169,7 +163,7 @@ ax.set_ylabel('P(C|A)',fontsize=14)
 ax.set_xlim(1e2,1e7)
 
 
-#% Upstream area distribution/slope plot
+#%% ---------- Upstream area distribution/slope plot -------------
 
 fig, ax = plt.subplots(figsize=(6.5, 4))
 
@@ -206,18 +200,6 @@ ax.set_xlim(10**2,10**7)
 ax.set_ylim(-1.5e-5,1.5e-5)
 
 #%%
-from matplotlib.colors import ListedColormap, BoundaryNorm
-
-
-color_list = {
-    -3: (0, 0, 1, 1.0),
-    -2: (0, 0.8, 1, 1.0),
-    -1: (0.55, 0.85, 0.90, 1.0),
-    0: (1.00, 1.00, 1.00, 1.0),
-    1: (0.80, 0.20, 0.15, 1.0),
-    2: (1, 0, 0, 1.0),
-    3: (0.4, 0.00, 0.00, 1.0)
-}
 
 lon_lim=[-123.99, -123.91]
 lat_lim=[43.71,43.76]
@@ -234,9 +216,6 @@ in_r=np.where((lat>=lat_lim[0]) & (lat<=lat_lim[1]))[0]
 
 extent=[E[np.min(in_c)],E[np.max(in_c)],N[np.min(in_r)],N[np.max(in_r)]]
 
-
-
-#%
 keys = sorted(color_list.keys())
 colors = [color_list[k] for k in keys]
 
@@ -270,8 +249,6 @@ ns=np.size(np.where(S==-1))/np.size(S)*100
 na=np.size(np.where(S==1))/np.size(S)*100
 npl=np.size(np.where(S==0))/np.size(S)*100
 
-
-
 keys = sorted(color_list.keys())
 colors = [color_list[k] for k in [-3,3,2,-2]]
 
@@ -282,8 +259,6 @@ ax1.set_xlim(E[np.min(in_c)],E[np.max(in_c)])
 ax1.set_ylim(N[np.min(in_r)],N[np.max(in_r)])
 ax1.set_xticks([])
 ax1.set_xticklabels([])
-
-
 
 n = len(colors)
 width = 1.0 / n
@@ -334,19 +309,3 @@ ax2.pie([nb,nd,nas,nss],colors=colors,startangle=10,
                 r'$'+str(np.round(nas,1))+'\%$',
                 r'$'+str(np.round(nss,1))+'\%$',))
 
-#%%
-
-
-
-
-
-
-
-
-# Example usage:
-
-
-#%%
-
-# im = plt.imshow(K[7],vmin=0, vmax=1,cmap='viridis')
-# plt.colorbar(im)
