@@ -140,21 +140,21 @@ sl = np.convolve(sl, np.ones(sm_win) / sm_win, mode='same')
 
 # Define colormap
 color_list = {
-    '-3': (0.11, 0.30, 0.95, 1.0),
-    '-2': (0.78, 0.95, 0.98, 1.0),
-    '-1': (0.55, 0.85, 0.90, 1.0),
-    '0': (1.00, 1.00, 1.00, 1.0),
-    '1': (0.80, 0.20, 0.15, 1.0),
-    '2': (0.95, 0.28, 0.26, 1.0),
-    '3': (0.33, 0.00, 0.00, 1.0)
+    -3: (0, 0, 1, 1.0),
+    -2: (0.4, 0.95, 1, 1.0),
+    -1: (0.55, 0.85, 0.90, 1.0),
+    0: (1.00, 1.00, 1.00, 1.0),
+    1: (0.80, 0.20, 0.15, 1.0),
+    2: (0.95, 0.28, 0.26, 1.0),
+    3: (0.33, 0.00, 0.00, 1.0)
 }
 
 #% Shape Class conditional pdfs
 fig, ax = plt.subplots(figsize=(6, 4))
-ax.plot(10**a,p_b,color=color_list['-3'],linewidth=2,label='Basins') 
-ax.plot(10**a,p_d,color=color_list['3'],linewidth=2,label='Domes')
-ax.plot(10**a,p_as,color=color_list['2'],linewidth=2,label='Antiformal saddles')  
-ax.plot(10**a,p_ss,color=color_list['-2'],linewidth=2,label='Synformal saddles')
+ax.plot(10**a,p_b,color=color_list[-3],linewidth=2,label='Basins') 
+ax.plot(10**a,p_d,color=color_list[3],linewidth=2,label='Domes')
+ax.plot(10**a,p_as,color=color_list[2],linewidth=2,label='Antiformal saddles')  
+ax.plot(10**a,p_ss,color=color_list[-2],linewidth=2,label='Synformal saddles')
 ax.legend(bbox_to_anchor=(0.55, 0.5), loc='upper left')   
 ax.set_xscale('log')   
 ax.set_xlabel('Upstream Drainage Area ($m^2$)',fontsize=14)
@@ -249,8 +249,9 @@ ns=np.size(np.where(S==-1))/np.size(S)*100
 na=np.size(np.where(S==1))/np.size(S)*100
 npl=np.size(np.where(S==0))/np.size(S)*100
 
-keys = sorted(color_list.keys())
-colors = [color_list[k] for k in [-3,3,2,-2]]
+
+piecolors = [color_list[k] for k in [-3,3,2,-2]]
+
 
 fig,ax1=plt.subplots(figsize=(8, 8))
 ax1.imshow(hillshade, cmap="gray",extent=dem.get_extent(),origin="lower")
@@ -258,9 +259,10 @@ ax1.imshow(K[4],cmap=cmap,norm=norm, alpha=0.5, extent=dem.get_extent(),origin="
 ax1.set_xlim(E[np.min(in_c)],E[np.max(in_c)])
 ax1.set_ylim(N[np.min(in_r)],N[np.max(in_r)])
 ax1.set_xticks([])
-ax1.set_xticklabels([])
+ax1.set_yticks([])
+# ax1.set_xticklabels([lon])
 
-n = len(colors)
+n = len(piecolors)
 width = 1.0 / n
 
 ax_bar = fig.add_axes([0.125, 0.85, 0.775, 0.04])
@@ -268,7 +270,7 @@ ax_bar.set_axis_off()
 import matplotlib.patches as patches
 labels = ["Basins", "Domes", "Antiformal Saddles", "Synformal Saddles"]
 
-for i, (color, label) in enumerate(zip(colors, labels)):
+for i, (color, label) in enumerate(zip(piecolors, labels)):
     # Filled block
     ax_bar.add_patch(patches.Rectangle(
         (i * width, 0), width, 1,
@@ -303,7 +305,7 @@ ax2 = fig.add_axes([0.66, 0.625, 0.2, 0.2])
 ax2.set_facecolor('white')
 
 # Issue with color order in pie chart
-ax2.pie([nb,nd,nas,nss],colors=colors,startangle=10,
+ax2.pie([nb,nd,nas,nss],colors=piecolors,startangle=10,
         labels=(r'$'+str(np.round(nb,1))+'\%$',
                 r'$'+str(np.round(nd,1))+'\%$',
                 r'$'+str(np.round(nas,1))+'\%$',
