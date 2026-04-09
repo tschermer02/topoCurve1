@@ -24,10 +24,10 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 # -------------- User inputs for generating TopoCurve object ------------
 
 # Path to the TIFF file (if using geotiff for DEM)
-tiff_file = '/Users/ntklema/Library/CloudStorage/OneDrive-FortLewisCollege/Research_Projects/Curvature/ESurf_Paper/Data/Umpqua_10m_2.tif'
+tiff_file = 'Oregon_Coast_Range_Files/Umpqua_10m_2.tif'
 
 # Define the path to a mask shapefile to select ROI
-mask_path='/Users/ntklema/Library/CloudStorage/OneDrive-FortLewisCollege/Research_Projects/Curvature/ESurf_Paper/Data/Umpqua_10m_2_Basins.shp'
+mask_path='Oregon_Coast_Range_Files/Umpqua_10m_2_Basins.shp'
 mask = gpd.read_file(mask_path)
 
 #Filter DEM and calculate curvatures
@@ -78,8 +78,8 @@ inflated_dem = grid.resolve_flats(flooded_dem)
 # Route flow (use 'routing' field to adjust flow routing algorithm)
 fdir = grid.flowdir(inflated_dem,routing='dinf')
 acc = grid.accumulation(fdir,routing='dinf')*grid.affine._scaling[0]**2
-eps=1e-30
-LogA=np.log10(acc) # Log transform drainage area data
+eps=1e-30 # negligable amount to add to log tranform to avoid zero values
+LogA=np.log10(acc+eps) # Log transform drainage area data
 
 #%% -------- Bin topography metrics by upstream area -----------
 
