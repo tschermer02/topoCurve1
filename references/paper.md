@@ -171,20 +171,7 @@ Gaussian curvature.
 
 ## Example Cases
 
-The *TopoCurve* repository includes three Jupyter notebooks with example
-implementations of the code. The notebook $example\_sphere.ipynb$
-calculates curvature invariants on a sphere of radius $R$, where the
-Mean curvature everywhere is $1/R$ and the Gaussian curvature is
-$1/R^2$. This example serves to demonstrate the ability of our method
-to accurately define curvature across a range of slopes relative to a
-horizontal plane. $example.ipynb$ shows a basic topographic analysis
-workflow, and demonstrates how the *TopoCurve* package can be used to
-recreate Figures <a href="#fig:specfilt" data-reference-type="ref"
-data-reference="fig:specfilt">2</a> and
-<a href="#fig:shapeclasses" data-reference-type="ref"
-data-reference="fig:shapeclasses">3</a> from this report. The notebook
-$Area\_Binning.py$ follows the workflow of Klema et al. (2025) and
-can be used to recreate their Figure 7.
+The *TopoCurve* repository includes three Jupyter notebooks that demonstrate example implementations of the code. The notebook `example_sphere.ipynb` calculates curvature invariants on a sphere of radius $R$, for which the mean curvature is $1/R$ everywhere and the Gaussian curvature is $1/R^2$. This example demonstrates the ability of the method to accurately define curvature across a range of slopes relative to a horizontal plane. The notebook `example.ipynb` presents a basic topographic analysis workflow and shows how the *TopoCurve* package can be used to recreate Figures 2 and 3 from this report. The notebook `Area_Binning.py` follows the workflow of Klema et al. (2025) and can be used to recreate their Figure 7.
 
 ## Figures
 ![Figure 1](Figures/Figure1.png)
