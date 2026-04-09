@@ -169,6 +169,28 @@ data-reference="fig:shapeclasses">3</a>.D. In this example we have not
 assigned a curvature threshold and so there are no pixels with zero
 Gaussian curvature.
 
+## Software Design
+
+`TopoCurve` is implemented in Python with a modular, object-oriented design that supports flexible workflows for processing gridded digital elevation models (DEMs). The core functionality is organized into two components: spectral filtering and curvature analysis.
+
+The `SpectralFiltering` class provides preprocessing tools in the frequency domain, including detrending, mirroring, windowing, and filtering. These operations preserve amplitude while isolating topographic features at user-defined spatial scales.
+
+The `CurveCalc` functionality computes principal, mean, and Gaussian curvature using a discrete differential geometry framework. By avoiding planar finite-difference approximations, the implementation enables orientation-independent analysis. Outputs include curvature maps, surface classifications, and statistical summaries.
+
+TopoCurve integrates with common scientific Python libraries and operates directly on gridded raster data. Example workflows are provided via Jupyter notebooks. The design emphasizes reproducibility, transparency, and ease of use while remaining flexible for advanced analysis.
+
+## Research Impact Statement
+
+TopoCurve provides a reproducible and physically consistent framework for analyzing topographic geometry from gridded digital elevation models. By leveraging discrete differential geometry methods, the software reduces orientation- and projection-dependent errors common in traditional DEM processing workflows.
+
+The ability to compute invariant mean and Gaussian curvature fields, along with associated surface classifications, enables more robust comparison of landscapes across spatial scales and environments. As high-resolution DEM datasets continue to expand, TopoCurve supports more consistent and quantitative analysis in geomorphology, geospatial analysis, and Earth surface process research.
+
+By providing an open and accessible implementation, TopoCurve lowers the barrier to applying differential geometry methods in geoscience workflows and promotes reproducible, data-driven investigation of topographic form.
+
+## AI Usage Disclosure
+
+Portions of this manuscript were refined with the assistance of AI-based language tools to improve clarity and organization. All scientific content, methodology, and software implementation were developed and verified by the authors, who take full responsibility for the accuracy and integrity of the work.
+
 ## Example Cases
 
 The `TopoCurve` repository includes three Jupyter notebooks that demonstrate example implementations of the code. The notebook `example_sphere.ipynb` calculates curvature invariants on a sphere of radius $R$, for which the mean curvature is $1/R$ everywhere and the Gaussian curvature is $1/R^2$. This example demonstrates the ability of the method to accurately define curvature across a range of slopes relative to a horizontal plane. The notebook `example.ipynb` presents a basic topographic analysis workflow and shows how the `TopoCurve` package can be used to recreate Figures 2 and 3 from this report. The notebook `Area_Binning.py` follows the workflow of Klema et al. (2025) and can be used to recreate their Figure 7.
