@@ -50,10 +50,10 @@ The calculation of topographic geometry metrics from Digital Elevation
 Models (DEMs) is fundamental to many Earth and planetary process
 studies. In particular, slope and curvature of topographic surfaces are
 linked to mass transport rates through analytical models, and thus are
-primary variables in studies that link topographic form to erosion rate
-variation. Making such studies directly comparable across the range of
-Earth and planetary settings requires the development data processing
-tools and workflows that minimize systematic error, and
+primary variables in studies that link topographic form to temporal and 
+spatial variation in erosion rate. Making such studies directly comparable
+across the range of Earth and planetary settings requires the development of 
+data processing tools and workflows that minimize systematic error, and
 self-consistently calculate such metrics on surfaces of any orientation.
 `TopoCurve` is a Python package designed to analyze DEMs through a
 discrete differential geometry approach that minimizes projection error
@@ -122,11 +122,11 @@ adapted from standard Fourier-based signal processing (Perron et al.
 2008). This workflow is well-suited for applications in which it is a
 priority not to suppress amplitude components within the region of
 interest (Mcnutt 1983; Klema et al. 2025). Amplitude spectra are
-filtered using a half-Gaussian filter in the spectral domain. The
-spectrum is then inverse-transformed, and the window gives the original
-extent of the DEM. This functionality is encapsulated in the `Spectral
-Filtering` object class, which allows the user to input wavenumber
-cutoffs for the filter and thus filter topography to a desired
+filtered using a half-Gaussian filter in the spectral domain, applied to 
+mirrored and windowed DEMs. The spectrum is then inverse-transformed, and the 
+original extent of the DEM recovered. This functionality is encapsulated 
+in the `Spectral Filtering` object class, which allows the user to input 
+wavenumber cutoffs for the filter and thus filter topography to a desired
 wavelength to isolate landscape features at a desired scale. The effects
 of low-pass filtering topography using this approach can be seen in
 Figure <a href="#fig:specfilt" data-reference-type="ref"
