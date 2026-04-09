@@ -1,57 +1,44 @@
 ---
-title: "TopoCurve: A Python Package for Advanced Digital Elevation Model Analysis"
+title: "TopoCurve: A python toolbox for discrete differential geometry on
+gridded surfaces"
 tags:
   - Python
-<<<<<<< HEAD
-  - geology
-  - topography
-  - curvature
-  - spectral filtering
-authors:
-  - name: Taylor Schermer
-    orcid: 0000-0000-0000-0000
-    equal-contrib: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    equal-contrib: true # (This is how you can denote equal contributions between multiple authors)
-    affiliation: 2
-  - name: Author with no affiliation
-    corresponding: true # (This is how to denote the corresponding author)
-    affiliation: 3
-  - given-names: Ludwig
-    dropping-particle: van
-    surname: Beethoven
-    affiliation: 3
-=======
   - Digital Elevation Models
   - Curvature Analysis
   - Geographic Information Systems (GIS)
   - Topographic Modeling
   - Geospatial Analysis
   - Environmental Modeling
+
 authors:
-- name: Sonie T. Schermer
-  orcid: 0009-0005-9439-4470
-  equal-contrib: false
-  affiliation: 1
-- name: Joel Nash
-  equal-contrib: false
-  affiliation: 1
-- name: Nate Klema
-- equal-contrib: false
-  affiliation: 1
->>>>>>> 1f2a0fe76024e38493d656c6ca1f95bdddcd1c56
+  - name: Taylor Schermer
+    orcid: 0009-0005-9439-4470
+    equal-contrib: false
+    affiliation: 1
+
+  - name: Joel Nash
+    equal-contrib: false
+    affiliation: 1
+
+  - name: Nate Klema
+    equal-contrib: false
+    affiliation: 1
+
+   - name: Leif Karlstrom
+    equal-contrib: false
+    affiliation: 2
+
 affiliations:
   - name: Fort Lewis College, United States of America
     index: 1
-date: 25 July 2024
-bibliography: paper.bib
 
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
+- name: University of Oregon, United States of America
+    index: 2
+
+date: 2026-04-09
+bibliography: references.bib
 ---
+ 
 # Summary
 
 The calculation of topographic geometry metrics from Digital Elevation
