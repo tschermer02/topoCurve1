@@ -74,7 +74,7 @@ are well motivated by theory (Fernandes and Dietrich 1997) common DEM
 processing workflows introduce systematic slope and curvature-dependent
 error that results from projecting topography onto a 2-D map plane
 (Minár et al. 2020; Klema et al. 2025), impacting the accuracy and
-utility of these connections. The workflow implemented in ‘TopoCurve‘
+utility of these connections. The workflow implemented in *TopoCurve*
 avoids some of this error through a formal surface-theory approach based
 on foundational ideas of Carl Frederick Gauss (Gauss 1902), which itself
 laid the groundwork for modern differential geometry and manifold theory
@@ -86,20 +86,20 @@ laid the groundwork for modern differential geometry and manifold theory
 Several open‐source Python libraries implement differential‐geometry and
 surface analysis tools, but most are designed for triangle meshes or
 point clouds rather than gridded elevation models. Packages such as
-‘LaPy’ provide FEM‐based Laplace–Beltrami operators and curvature flows
+*LaPy* provide FEM‐based Laplace–Beltrami operators and curvature flows
 for mesh surfaces (Deep-MI 2023), while geometry‐processing libraries
 including ‘trimesh’ and ‘PyMesh’ offer curvature estimators, normals,
 and distance operators for 3D meshes
 (<span class="nocase">Dawson-Haggerty et al.</span> 2019; Zhou 2018).
-Point‐cloud toolkits such as ‘Open3D’ and ‘PyTorch3D’ supply additional
+Point‐cloud toolkits such as *Open3D* and *PyTorch3D* supply additional
 intrinsic operators and geodesic utilities (Zhou et al. 2018;
 <span class="nocase">Ravi et al.</span> 2020). Although these libraries
 demonstrate broad interest in differential geometry within Python
 ecosystems, they are primarily designed for meshes rather than raster
 data.
 
-For geospatial applications, packages like ‘richdem’, ‘whitebox’, and
-‘PyDEM’ compute slope, aspect, and finite‐difference curvature on DEMs,
+For geospatial applications, packages like *richdem*, *whitebox*, and
+*PyDEM* compute slope, aspect, and finite‐difference curvature on DEMs,
 but these approaches typically rely on planar finite-difference
 approximations that can introduce orientation and projection errors at
 high relief or resolution (Barnes 2016; Lindsay 2013;
@@ -124,8 +124,8 @@ priority not to suppress amplitude components within the region of
 interest (Mcnutt 1983; Klema et al. 2025). Amplitude spectra are
 filtered using a half-Gaussian filter in the spectral domain. The
 spectrum is then inverse-transformed, and the window gives the original
-extent of the DEM. This functionality is encapsulated in the ‘Spectral
-Filtering’ object class, which allows the user to input wavenumber
+extent of the DEM. This functionality is encapsulated in the *Spectral
+Filtering* object class, which allows the user to input wavenumber
 cutoffs for the filter and thus filter topography to a desired
 wavelength to isolate landscape features at a desired scale. The effects
 of low-pass filtering topography using this approach can be seen in
@@ -135,10 +135,10 @@ the region of Purgatory Ski Area north of Durango, CO, is filtered to
 $200$ meters with half-Gaussian filter that begins at 150 m.
 
 Once topography has been filtered to a desired wavelength, the Mean and
-Gaussian curvatures are calculated using the ‘CurveCalc’ function within
+Gaussian curvatures are calculated using the *CurveCalc* function within
 the *TopoCurve* object class. Many modern differential geometry
 approaches compute these surface curvature invariants through definition
-of the ‘Shape Operator matrix’ (O’Neill 2006; Mynatt et al. 2007).
+of the *Shape Operator matrix* (O’Neill 2006; Mynatt et al. 2007).
 However, the same results with significantly shorter computation times
 are found using principal curvatures derived from quadratic equations
 that record how curvature varies with orientation at a given point. A
@@ -172,18 +172,18 @@ Gaussian curvature.
 ## Example Cases
 
 The *TopoCurve* repository includes three Jupyter notebooks with example
-implementations of the code. The notebook ’$`example\_sphere.ipynb`$’
+implementations of the code. The notebook $example\_sphere.ipynb$
 calculates curvature invariants on a sphere of radius $R$, where the
 Mean curvature everywhere is $1/R$ and the Gaussian curvature is
 $1/R^2$. This example serves to demonstrate the ability of our method
 to accurately define curvature across a range of slopes relative to a
-horizontal plane. ‘$`example.ipynb`$’ shows a basic topographic analysis
+horizontal plane. $example.ipynb$ shows a basic topographic analysis
 workflow, and demonstrates how the *TopoCurve* package can be used to
 recreate Figures <a href="#fig:specfilt" data-reference-type="ref"
 data-reference="fig:specfilt">2</a> and
 <a href="#fig:shapeclasses" data-reference-type="ref"
 data-reference="fig:shapeclasses">3</a> from this report. The notebook
-’$`Area\_Binning.py`$ follows the workflow of Klema et al. (2025) and
+$Area\_Binning.py$ follows the workflow of Klema et al. (2025) and
 can be used to recreate their Figure 7.
 
 ## Figures
