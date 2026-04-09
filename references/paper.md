@@ -193,6 +193,7 @@ can be used to recreate their Figure 7.
 <figcaption>DEM processing workflow.</figcaption>
 </figure>
 
+
 <figure id="fig:specfilt" data-latex-placement="H">
 <img src="Figures/Figure2.png" style="width:90.0%" />
 <figcaption>Example of the low-pass filtering pre-processing step
@@ -203,6 +204,7 @@ of 150 m, and which is applied to a mirrored DEM <span class="citation"
 data-cites="klema2025discrete-964">Klema et al.
 (2025)</span>.</figcaption>
 </figure>
+
 
 <figure id="fig:shapeclasses" data-latex-placement="H">
 <img src="Figures/Figure3.png" style="width:90.0%" />
