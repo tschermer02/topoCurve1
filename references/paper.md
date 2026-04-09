@@ -194,7 +194,7 @@ can be used to recreate their Figure 7.
 </figure>
 
 <figure id="fig:specfilt" data-latex-placement="H">
-<embed src="Figures/Figure2.pdf" style="width:90.0%" />
+<embed src="Figures/Figure2.png" style="width:90.0%" />
 <figcaption>Example of the low-pass filtering pre-processing step
 applied to a 10 m resolution DEM taken of Purgatory ski area north of
 Durango, CO. <strong>A.</strong> The raw DEM. <strong>B.</strong> DEM
@@ -205,7 +205,7 @@ data-cites="klema2025discrete-964">Klema et al.
 </figure>
 
 <figure id="fig:shapeclasses" data-latex-placement="H">
-<embed src="Figures/Figure3.pdf" style="width:90.0%" />
+<embed src="Figures/Figure3.png" style="width:90.0%" />
 <figcaption> Curvature invariants and surface shape classes calculated
 on the filtered DEM from Figure <a href="#fig:specfilt"
 data-reference-type="ref" data-reference="fig:specfilt">2</a>.
