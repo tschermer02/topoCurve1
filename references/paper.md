@@ -222,6 +222,7 @@ curvature. <strong>F.</strong> Map of surface shape
 classes.</figcaption>
 </figure>
 
+## References
 <div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-balut2020pydem" class="csl-entry">
