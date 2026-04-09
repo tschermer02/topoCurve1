@@ -205,7 +205,6 @@ data-cites="klema2025discrete-964">Klema et al.
 (2025)</span>.</figcaption>
 </figure>
 
-
 <figure id="fig:shapeclasses" data-latex-placement="H">
 <img src="Figures/Figure3.png" style="width:90.0%" />
 <figcaption> Curvature invariants and surface shape classes calculated
