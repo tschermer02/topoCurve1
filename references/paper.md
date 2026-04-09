@@ -206,7 +206,7 @@ data-cites="klema2025discrete-964">Klema et al.
 </figure>
 
 <figure id="fig:shapeclasses" data-latex-placement="H">
-<img src="Figures/Figure3.png" style="width:90.0%" />
+<img src="Figures/Figure3.jpg" style="width:90.0%" />
 <figcaption> Curvature invariants and surface shape classes calculated
 on the filtered DEM from Figure <a href="#fig:specfilt"
 data-reference-type="ref" data-reference="fig:specfilt">2</a>.
