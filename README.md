@@ -1,7 +1,7 @@
 ![TopoCurve Logo](./logo.png)
 
 # TopoCurve
-TopoCurve is a Python library for processing digital elevation models (DEM) stored in GeoTIFF format. This library provides functionalities to extract metadata, calculate principal curvatures and curvature features, as well as plot elevation values. It also includes spectral filtering capabilities for advanced DEM processing.
+TopoCurve is a Python library for processing gridded digital elevation models (DEMs). This library provides functionalities to extract metadata, calculate principal curvatures and curvature features, as well as plot elevation values. It also includes spectral filtering capabilities for advanced DEM processing.
 
 ## Installation via pip install
 To install TopoCurve, simply pip install:
