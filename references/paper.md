@@ -86,20 +86,20 @@ laid the groundwork for modern differential geometry and manifold theory
 Several open‐source Python libraries implement differential‐geometry and
 surface analysis tools, but most are designed for triangle meshes or
 point clouds rather than gridded elevation models. Packages such as
-*LaPy* provide FEM‐based Laplace–Beltrami operators and curvature flows
+`LaPy` provide FEM‐based Laplace–Beltrami operators and curvature flows
 for mesh surfaces (Deep-MI 2023), while geometry‐processing libraries
-including ‘trimesh’ and ‘PyMesh’ offer curvature estimators, normals,
+including `trimesh` and `PyMesh` offer curvature estimators, normals,
 and distance operators for 3D meshes
 (<span class="nocase">Dawson-Haggerty et al.</span> 2019; Zhou 2018).
-Point‐cloud toolkits such as *Open3D* and *PyTorch3D* supply additional
+Point‐cloud toolkits such as `Open3D` and `PyTorch3D` supply additional
 intrinsic operators and geodesic utilities (Zhou et al. 2018;
 <span class="nocase">Ravi et al.</span> 2020). Although these libraries
 demonstrate broad interest in differential geometry within Python
 ecosystems, they are primarily designed for meshes rather than raster
 data.
 
-For geospatial applications, packages like *richdem*, *whitebox*, and
-*PyDEM* compute slope, aspect, and finite‐difference curvature on DEMs,
+For geospatial applications, packages like `richdem`, `whitebox`, and
+`PyDEM` compute slope, aspect, and finite‐difference curvature on DEMs,
 but these approaches typically rely on planar finite-difference
 approximations that can introduce orientation and projection errors at
 high relief or resolution (Barnes 2016; Lindsay 2013;
