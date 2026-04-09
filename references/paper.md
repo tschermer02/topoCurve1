@@ -36,8 +36,15 @@ affiliations:
 date: 2026-04-09
 bibliography: references.bib
 ---
- 
-# Summary
+
+# TopoCurve: A python toolbox for discrete differential geometry on gridded surfaces
+
+Taylor Schermer<sup>1</sup>, Joel Nash<sup>1</sup>, Nathaniel Klema<sup>1</sup>, and Leif Karlstrom<sup>2</sup>
+
+<sup>1</sup>Fort Lewis College  
+<sup>2</sup>University of Oregon
+
+## Summary
 
 The calculation of topographic geometry metrics from Digital Elevation
 Models (DEMs) is fundamental to many Earth and planetary process
@@ -57,7 +64,7 @@ providing a detailed picture of topographic geometry with potential
 applications in geomorphology, geomatics, geography, and adjacent Earth
 science fields.
 
-# Statement of Need
+## Statement of Need
 
 As both the resolution and availability of digital elevation datasets
 increases, so does their utility in identifying surface process
@@ -74,7 +81,7 @@ laid the groundwork for modern differential geometry and manifold theory
 (Pesic 2007). The approach taken here follows that of Klema et al.
 (2025), which provides a detailed implementation example.
 
-# State of the Field
+## State of the Field
 
 Several open‐source Python libraries implement differential‐geometry and
 surface analysis tools, but most are designed for triangle meshes or
@@ -103,7 +110,7 @@ methods to DEM rasters, enabling reproducible, orientation‐independent
 calculations of mean and Gaussian curvature and associated shape
 classifications on topographic surfaces.
 
-# Methods
+## Methods
 
 *TopoCurve* provides a comprehensive set of tools for both filtering DEM
 datasets and calculating intrinsic curvature invariants of topographic
@@ -162,7 +169,7 @@ data-reference="fig:shapeclasses">3</a>.D. In this example we have not
 assigned a curvature threshold and so there are no pixels with zero
 Gaussian curvature.
 
-# Example Cases
+## Example Cases
 
 The *TopoCurve* repository includes three Jupyter notebooks with example
 implementations of the code. The notebook ’$`example\_sphere.ipynb`$’
@@ -179,7 +186,7 @@ data-reference="fig:shapeclasses">3</a> from this report. The notebook
 ’$`Area\_Binning.py`$ follows the workflow of Klema et al. (2025) and
 can be used to recreate their Figure 7.
 
-# Figures
+## Figures
 
 <figure id="fig:Flowchart" data-latex-placement="H">
 <img src="Figures/Figure1.png" style="width:90.0%" />
