@@ -187,41 +187,17 @@ data-reference="fig:shapeclasses">3</a> from this report. The notebook
 can be used to recreate their Figure 7.
 
 ## Figures
+![Figure 1](Figures/Figure1.png)
 
-<figure id="fig:Flowchart" data-latex-placement="H">
-<img src="Figures/Figure1.png" style="width:90.0%" />
-<figcaption>DEM processing workflow.</figcaption>
-</figure>
+**Figure 1.** DEM processing workflow.
 
+![Figure 2](Figures/Figure2.png)
 
-<figure id="fig:specfilt" data-latex-placement="H">
-<img src="Figures/Figure2.png" style="width:90.0%" />
-<figcaption>Example of the low-pass filtering pre-processing step
-applied to a 10 m resolution DEM taken of Purgatory ski area north of
-Durango, CO. <strong>A.</strong> The raw DEM. <strong>B.</strong> DEM
-filtered to 200 m wavelengths with a filter that tapers from wavelengths
-of 150 m, and which is applied to a mirrored DEM <span class="citation"
-data-cites="klema2025discrete-964">Klema et al.
-(2025)</span>.</figcaption>
-</figure>
+**Figure 2.** Example of the low-pass filtering pre-processing step applied to a 10 m resolution DEM from the Purgatory Ski Area north of Durango, Colorado. **A,** raw DEM. **B,** DEM filtered to 200 m wavelengths using a half-Gaussian filter that tapers from 150 m and is applied to a mirrored DEM (Klema et al., 2025).
 
-<figure id="fig:shapeclasses" data-latex-placement="H">
-<img src="Figures/Figure3.jpg" style="width:90.0%" />
-<figcaption> Curvature invariants and surface shape classes calculated
-on the filtered DEM from Figure <a href="#fig:specfilt"
-data-reference-type="ref" data-reference="fig:specfilt">2</a>.
-<strong>A.</strong> First principal curvature. <strong>B.</strong>
-Second principal curvature. <strong>C.</strong> Shape classes derivable
-from Mean and Gaussian curvatures at each individual DEM pixel. Figure
-from <span class="citation" data-cites="klema2025discrete-964">Klema et
-al. (2025)</span>, however it is a modification of similar figures in
-<span class="citation" data-cites="bergbauer2003how-56b">Bergbauer and
-Pollard (2003)</span> and <span class="citation"
-data-cites="mynatt2007using-ba6">Mynatt et al. (2007)</span>.
-<strong>D.</strong> Mean curvature. <strong>E.</strong> Gaussian
-curvature. <strong>F.</strong> Map of surface shape
-classes.</figcaption>
-</figure>
+![Figure 3](Figures/Figure3.jpg)
+
+**Figure 3.** Curvature invariants and surface shape classes calculated from the filtered DEM shown in Figure 2. **A,** first principal curvature. **B,** second principal curvature. **C,** surface shape classes derived from the mean and Gaussian curvatures at each DEM pixel. **D,** mean curvature. **E,** Gaussian curvature. **F,** map of surface shape classes. Panel C is adapted from Klema et al. (2025), with modifications based on Bergbauer and Pollard (2003) and Mynatt et al. (2007).
 
 ## References
 <div id="refs" class="references csl-bib-body hanging-indent">
