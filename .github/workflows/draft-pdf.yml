@@ -22,3 +22,9 @@ jobs:
         with:
           journal: joss
           paper-path: references/paper.md
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: paper.pdf
