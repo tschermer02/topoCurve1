@@ -55,7 +55,7 @@ variation. Making such studies directly comparable across the range of
 Earth and planetary settings requires the development data processing
 tools and workflows that minimize systematic error, and
 self-consistently calculate such metrics on surfaces of any orientation.
-*TopoCurve* is a Python package designed to analyze DEMs through a
+`TopoCurve` is a Python package designed to analyze DEMs through a
 discrete differential geometry approach that minimizes projection error
 through calculation of the full curvature tensor at each pixel in a DEM.
 Through the calculation of invariant Mean and Gaussian curvatures this
@@ -74,7 +74,7 @@ are well motivated by theory (Fernandes and Dietrich 1997) common DEM
 processing workflows introduce systematic slope and curvature-dependent
 error that results from projecting topography onto a 2-D map plane
 (Minár et al. 2020; Klema et al. 2025), impacting the accuracy and
-utility of these connections. The workflow implemented in *TopoCurve*
+utility of these connections. The workflow implemented in `TopoCurve`
 avoids some of this error through a formal surface-theory approach based
 on foundational ideas of Carl Frederick Gauss (Gauss 1902), which itself
 laid the groundwork for modern differential geometry and manifold theory
@@ -105,14 +105,14 @@ approximations that can introduce orientation and projection errors at
 high relief or resolution (Barnes 2016; Lindsay 2013;
 <span class="nocase">Balut et al.</span> 2020).
 
-*TopoCurve* addresses this gap by adapting discrete differential‐geometry
+`TopoCurve` addresses this gap by adapting discrete differential‐geometry
 methods to DEM rasters, enabling reproducible, orientation‐independent
 calculations of mean and Gaussian curvature and associated shape
 classifications on topographic surfaces.
 
 ## Methods
 
-*TopoCurve* provides a comprehensive set of tools for both filtering DEM
+`TopoCurve` provides a comprehensive set of tools for both filtering DEM
 datasets and calculating intrinsic curvature invariants of topographic
 surfaces. The complete workflow for filtering and computing curvature
 invariants on a raw DEM can be seen in Figure
@@ -124,8 +124,8 @@ priority not to suppress amplitude components within the region of
 interest (Mcnutt 1983; Klema et al. 2025). Amplitude spectra are
 filtered using a half-Gaussian filter in the spectral domain. The
 spectrum is then inverse-transformed, and the window gives the original
-extent of the DEM. This functionality is encapsulated in the *Spectral
-Filtering* object class, which allows the user to input wavenumber
+extent of the DEM. This functionality is encapsulated in the `Spectral
+Filtering` object class, which allows the user to input wavenumber
 cutoffs for the filter and thus filter topography to a desired
 wavelength to isolate landscape features at a desired scale. The effects
 of low-pass filtering topography using this approach can be seen in
@@ -135,8 +135,8 @@ the region of Purgatory Ski Area north of Durango, CO, is filtered to
 $200$ meters with half-Gaussian filter that begins at 150 m.
 
 Once topography has been filtered to a desired wavelength, the Mean and
-Gaussian curvatures are calculated using the *CurveCalc* function within
-the *TopoCurve* object class. Many modern differential geometry
+Gaussian curvatures are calculated using the `CurveCalc` function within
+the `TopoCurve` object class. Many modern differential geometry
 approaches compute these surface curvature invariants through definition
 of the *Shape Operator matrix* (O’Neill 2006; Mynatt et al. 2007).
 However, the same results with significantly shorter computation times
@@ -171,7 +171,7 @@ Gaussian curvature.
 
 ## Example Cases
 
-The *TopoCurve* repository includes three Jupyter notebooks that demonstrate example implementations of the code. The notebook `example_sphere.ipynb` calculates curvature invariants on a sphere of radius $R$, for which the mean curvature is $1/R$ everywhere and the Gaussian curvature is $1/R^2$. This example demonstrates the ability of the method to accurately define curvature across a range of slopes relative to a horizontal plane. The notebook `example.ipynb` presents a basic topographic analysis workflow and shows how the *TopoCurve* package can be used to recreate Figures 2 and 3 from this report. The notebook `Area_Binning.py` follows the workflow of Klema et al. (2025) and can be used to recreate their Figure 7.
+The `TopoCurve` repository includes three Jupyter notebooks that demonstrate example implementations of the code. The notebook `example_sphere.ipynb` calculates curvature invariants on a sphere of radius $R$, for which the mean curvature is $1/R$ everywhere and the Gaussian curvature is $1/R^2$. This example demonstrates the ability of the method to accurately define curvature across a range of slopes relative to a horizontal plane. The notebook `example.ipynb` presents a basic topographic analysis workflow and shows how the `TopoCurve` package can be used to recreate Figures 2 and 3 from this report. The notebook `Area_Binning.py` follows the workflow of Klema et al. (2025) and can be used to recreate their Figure 7.
 
 ## Figures
 ![Figure 1](Figures/Figure1.png)
