@@ -1,0 +1,24 @@
+name: Build paper PDF
+
+on:
+  push:
+    paths:
+      - references/paper.md
+      - references/references.bib
+      - references/Figures/**
+      - .github/workflows/draft-pdf.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build PDF
+        uses: openjournals/openjournals-draft-action@master
+        with:
+          journal: joss
+          paper-path: references/paper.md
