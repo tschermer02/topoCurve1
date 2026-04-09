@@ -1,6 +1,5 @@
 ---
-title: "TopoCurve: A python toolbox for discrete differential geometry on
-gridded surfaces"
+title: "TopoCurve: A python toolbox for discrete differential geometry on gridded surfaces"
 tags:
   - Python
   - Digital Elevation Models
@@ -24,15 +23,14 @@ authors:
     equal-contrib: false
     affiliation: 1
 
-   - name: Leif Karlstrom
+  - name: Leif Karlstrom
     equal-contrib: false
     affiliation: 2
 
 affiliations:
   - name: Fort Lewis College, United States of America
     index: 1
-
-- name: University of Oregon, United States of America
+  - name: University of Oregon, United States of America
     index: 2
 
 date: 2026-04-09
